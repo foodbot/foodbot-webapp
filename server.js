@@ -34,6 +34,7 @@ app.set('port', process.env.PORT || 3050);
 
 //example of a query /testdb?address
 app.get('/testdb', function(req, res){
+  res.addHeader("Access-Control-Allow-Origin", "*");
   var address = req.query.address || "94108";
   var time = new Date().getTime();
 
