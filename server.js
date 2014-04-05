@@ -121,7 +121,6 @@ app.get('/results', function(req, res){
       res.send(200, {results:results, status: "OK"});
     });
   });
-  
 });
 // app.get('/users', user.list);
 
