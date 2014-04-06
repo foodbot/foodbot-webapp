@@ -108,7 +108,7 @@ app.get('/api', function(req, res){
       });
       return isValid;
     });
-    res.send(results);
+    res.send({results:results, status:"OK"});
   });
 });
 
