@@ -4,11 +4,10 @@ var Promise = require('bluebird');
 var foodPhrases = require('./foodPhrases');
 var excludedPhrases = require('./excludedPhrases');
 var http = require('http');
-var path = require('path');
 var request = Promise.promisifyAll(require('request'));
 var _ = require('underscore');
 
-//Added the access to the database
+//Adding access to the database
 var pmongo = require('promised-mongo');
 var db = pmongo('mongodb://feedmeserver.cloudapp.net:27017/feedme', ['meetup']);
 
@@ -16,38 +15,20 @@ var app = express();
 
 // all environments
 app.set('port', process.env.PORT || 3050);
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'ejs');
-// app.use(express.favicon());
-// app.use(express.logger('dev'));
-// app.use(express.json());
-// app.use(express.urlencoded());
-// app.use(express.methodOverride());
-// app.use(app.router);
-// app.use(express.static(path.join(__dirname, 'public')));
-
-// development only
-// if ('development' == app.get('env')) {
-//   app.use(express.errorHandler());
-// }
-
 
 //example of a query /testdb?address
-app.get('/testdb', function(req, res){
+app.get('/api', function(req, res){
   res.header("Access-Control-Allow-Origin", "*");
-  var address = req.query.address || "94108";
+  var address = req.query.address || "";
   var time = new Date().getTime();
-
   var radius = req.query.radius || 5;
   var googleApiKey = process.env.GOOGLEAPIKEY || "123FAKEKEY";
-  var meetupApiKey = process.env.MEET2UPAPIKEY || "123FAKEKEY";
   console.log("address:", address, "time:", time);
 
   request.getAsync({url:"https://maps.googleapis.com/maps/api/geocode/json", qs:{key:googleApiKey, sensor:"false", address:address}})
-  .then(function(response){
-    console.log(response[0].body);
-    
-    var body = JSON.parse(response[0].body);
+  .then(function(args){
+    console.log(args[1]);
+    var body = JSON.parse(args[1]);
 
     if(body.status === "OK"){
       var lat = body.results[0].geometry.location.lat;
@@ -55,7 +36,7 @@ app.get('/testdb', function(req, res){
       return {lat: lat, lng:lng};
     }else {
       console.log("API Error:", body.status);
-      res.send(200, {results:{}, status: body.status});
+      res.send(200, {results:[], status: body.status});
       return null;
     }
   })
@@ -65,17 +46,15 @@ app.get('/testdb', function(req, res){
     }
     console.log("Lat:", data.lat, "Long:", data.lng, "Status: OK");
     
-    return db.meetup.find({time:{$gt:time}}).limit(200).toArray().then(function(events) {
+    return db.meetup.find({time:{$gt:time-5*60*60*1000}}).limit(1000).toArray().then(function(events) {
       var i = 1;
       var dist = null;
       var evtLat = null;
       var evtLng = null;
 
       var filteredEvt = _.filter(events, function(event){
-
         evtLat = event.venue.address.latitude;
         evtLng = event.venue.address.longitude;
-        
         if(evtLat !== null && evtLng !== null){
           dist = distance(data.lat, data.lng, evtLat, evtLng);
           if(dist < radius){
@@ -84,6 +63,10 @@ app.get('/testdb', function(req, res){
             return event;
           }
         }
+      });
+      //filters for events that already finished
+      filteredEvt = _.filter(events, function(event){
+        return event.time + event.duration < time;
       });
       return filteredEvt;
     });
@@ -125,11 +108,11 @@ app.get('/testdb', function(req, res){
       });
       return isValid;
     });
-    res.send(results);
+    res.send({results:results, status:"OK"});
   });
 });
 
-http.createServer(app).listen(app.get('port'), function(){
+app.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
