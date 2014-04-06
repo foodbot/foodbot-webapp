@@ -28,3 +28,7 @@ results
 
 npm-debug.log
 node_modules
+azure.err
+setup.txt
+Food.sublime-project
+Food.sublime-workspace
