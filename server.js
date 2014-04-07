@@ -27,7 +27,7 @@ app.get('/api', function(req, res){
 
   request.getAsync({url:"https://maps.googleapis.com/maps/api/geocode/json", qs:{key:googleApiKey, sensor:"false", address:address}})
   .then(function(args){
-    console.log(args[1]);
+    // console.log(args[1]);
     var body = JSON.parse(args[1]);
 
     if(body.status === "OK"){
@@ -51,7 +51,6 @@ app.get('/api', function(req, res){
       var dist = null;
       var evtLat = null;
       var evtLng = null;
-
       var filteredEvt = _.filter(events, function(event){
         evtLat = event.venue.address.latitude;
         evtLng = event.venue.address.longitude;
@@ -65,14 +64,12 @@ app.get('/api', function(req, res){
         }
       });
       //filters for events that already finished
-      filteredEvt = _.filter(events, function(event){
-        return event.time + event.duration < time;
+      filteredEvt = _.filter(filteredEvt, function(event){
+        return event.time + event.duration > time;
       });
       return filteredEvt;
     });
   }).then(function(results){
-    console.log(results);
-
     //filters for foods terms and adds found foods to json
     results = _.filter(results, function(item){
       var hasFood = false;
@@ -108,6 +105,7 @@ app.get('/api', function(req, res){
       });
       return isValid;
     });
+    console.log("Results returned:", results.length);
     res.send({results:results, status:"OK"});
   });
 });
