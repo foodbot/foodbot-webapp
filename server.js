@@ -92,11 +92,11 @@ app.get('/api', function(req, res){
   })
   .then(function(results){
     console.log("Results returned:", results.length);
-    res.send(200, {results:results, status:"OK"});
+    res.send({results:results, status:"OK"});
   })
   .catch(function(err){
     console.log("Error:", err);
-    res.send(400, {results:[], status:err+""});
+    res.send({results:[], status:err+""});
   });
 });
 
