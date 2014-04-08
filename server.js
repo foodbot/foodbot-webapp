@@ -16,6 +16,15 @@ var app = express();
 // all environments
 app.set('port', process.env.PORT || 3050);
 
+setInterval(function(){
+  db.runCommand({ping:1})
+  .then(function(res) {
+    if(res.ok){ 
+      console.log("We're still up!");
+    }
+  });
+}, 3000);
+
 //example of a query /testdb?address
 app.get('/api', function(req, res){
   res.header("Access-Control-Allow-Origin", "*");
