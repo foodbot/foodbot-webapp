@@ -9,7 +9,7 @@ var _ = require('underscore');
 
 //Adding access to the database
 var pmongo = require('promised-mongo');
-var db = pmongo('mongodb://feedmeserver.cloudapp.net:27017/feedme', ['meetup']);
+var db = pmongo('mongodb://feedmeserver.cloudapp.net:27017/feedme?maxIdleTimeMS=180000', ['meetup']);
 
 var app = express();
 
