@@ -27,9 +27,7 @@ app.get('/api', function(req, res){
 
   request.getAsync({url:"https://maps.googleapis.com/maps/api/geocode/json", qs:{key:googleApiKey, sensor:"false", address:address}})
   .then(function(args){
-    // console.log(args[1]);
     var body = JSON.parse(args[1]);
-
     if(body.status === "OK"){
       var lat = body.results[0].geometry.location.lat;
       var lng = body.results[0].geometry.location.lng;
@@ -45,74 +43,74 @@ app.get('/api', function(req, res){
       return;
     }
     console.log("Lat:", data.lat, "Long:", data.lng, "Status: OK");
-    
-    return db.meetup.find({time:{$gt:time-5*60*60*1000}}).limit(1000).toArray()
-    .then(function(events) {
-        var i = 1;
-        var dist = null;
-        var evtLat = null;
-        var evtLng = null;
-        var filteredEvt = _.filter(events, function(event){
-          evtLat = event.venue.address.latitude;
-          evtLng = event.venue.address.longitude;
-          if(evtLat !== null && evtLng !== null){
-            dist = distance(data.lat, data.lng, evtLat, evtLng);
-            if(dist < radius){
-              // console.log(i++, 'info: ', evtLat, evtLng, '\n distance:',dist);
-              event.distance = dist;
-              return event;
-            }
-          }
-        });
-        //filters for events that already finished
-        filteredEvt = _.filter(filteredEvt, function(event){
-          return event.time + event.duration > time;
-        });
-        return filteredEvt;
-      });   
-    }).then(function(results){
-      //filters for foods terms and adds found foods to json
-      results = _.filter(results, function(item){
-        var hasFood = false;
-        var foodProvided = [];
+    return db.meetup.find({time:{$gt:time-5*60*60*1000}}).limit(1000).toArray();
+  })
+  .then(function(events) {
+    var i = 1;
+    var dist = null;
+    var evtLat = null;
+    var evtLng = null;
+    var filteredEvt = _.filter(events, function(event){
+      evtLat = event.venue.address.latitude;
+      evtLng = event.venue.address.longitude;
+      if(evtLat !== null && evtLng !== null){
+        dist = distance(data.lat, data.lng, evtLat, evtLng);
+        if(dist < radius){
+          // console.log(i++, 'info: ', evtLat, evtLng, '\n distance:',dist);
+          event.distance = dist;
+          return event;
+        }
+      }
+    });
+    //filters for events that already finished
+    filteredEvt = _.filter(filteredEvt, function(event){
+      return event.time + event.duration > time;
+    });
+    return filteredEvt;   
+  })
+  .then(function(results){
+    //filters for foods terms and adds found foods to json
+    results = _.filter(results, function(item){
+      var hasFood = false;
+      var foodProvided = [];
 
-        _.each(foodPhrases.regexpList, function(regexp){
-          if(!item.description){
-            return;
-          }
-          var matches = item.description.match(regexp);
-          if(matches){
-            hasFood = true;
-            foodProvided = foodProvided.concat(matches);
-          }
-        });
-        foodProvided = _.map(foodProvided, function(food){
-          return food.toLowerCase().trim();
-        });
-        item.foodProvided = foodProvided;
-        return hasFood;
-      });
-      //filters for excluded terms
-      results = _.filter(results, function(item){
-        var isValid = true;
+      _.each(foodPhrases.regexpList, function(regexp){
         if(!item.description){
           return;
         }
-        _.each(excludedPhrases.regexpList, function(regexp){
-          var matches = item.description.match(regexp);
-          if(matches){
-            isValid = false;
-          }
-        });
-        return isValid;
+        var matches = item.description.match(regexp);
+        if(matches){
+          hasFood = true;
+          foodProvided = foodProvided.concat(matches);
+        }
       });
-      console.log("Results returned:", results.length);
-      res.send({results:results, status:"OK"});
-    })
-    .catch(function(err){
-      console.log(err);
-      res.send(400, {results:results, status:err});
+      foodProvided = _.map(foodProvided, function(food){
+        return food.toLowerCase().trim();
+      });
+      item.foodProvided = foodProvided;
+      return hasFood;
     });
+    //filters for excluded terms
+    results = _.filter(results, function(item){
+      var isValid = true;
+      if(!item.description){
+        return;
+      }
+      _.each(excludedPhrases.regexpList, function(regexp){
+        var matches = item.description.match(regexp);
+        if(matches){
+          isValid = false;
+        }
+      });
+      return isValid;
+    });
+    console.log("Results returned:", results.length);
+    res.send({results:results, status:"OK"});
+  })
+  .catch(function(err){
+    console.log(err);
+    res.send(400, {results:results, status:err});
+  });
 });
 
 app.listen(app.get('port'), function(){
