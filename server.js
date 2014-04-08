@@ -31,85 +31,72 @@ app.get('/api', function(req, res){
     if(body.status === "OK"){
       var lat = body.results[0].geometry.location.lat;
       var lng = body.results[0].geometry.location.lng;
+      console.log("Lat:", lat, "Long:", lng, "Status: OK");
       return {lat: lat, lng:lng};
     }else {
-      console.log("API Error:", body.status);
-      res.send(200, {results:[], status: body.status});
-      return null;
+      throw "API Error: "+body.status;
     }
   })
   .then(function(data){
-    if(!data){
-      return;
-    }
-    console.log("Lat:", data.lat, "Long:", data.lng, "Status: OK");
-    return db.meetup.find({time:{$gt:time-5*60*60*1000}}).limit(1000).toArray();
+    return Promise.all([
+      db.meetup.find({time:{$gt:time-5*60*60*1000}}).limit(1000).toArray(), 
+      data
+    ]);
   })
-  .then(function(events) {
+  .spread(function(events, data) {
     var i = 1;
     var dist = null;
     var evtLat = null;
     var evtLng = null;
-    var filteredEvt = _.filter(events, function(event){
-      evtLat = event.venue.address.latitude;
-      evtLng = event.venue.address.longitude;
+    return _.filter(events, function(item){
+      evtLat = item.venue.address.latitude;
+      evtLng = item.venue.address.longitude;
       if(evtLat !== null && evtLng !== null){
         dist = distance(data.lat, data.lng, evtLat, evtLng);
-        if(dist < radius){
-          // console.log(i++, 'info: ', evtLat, evtLng, '\n distance:',dist);
-          event.distance = dist;
-          return event;
-        }
+        item.distance = dist;
+        // console.log(i++, 'info: ', evtLat, evtLng, '\n distance:',dist);
+        return dist < radius;
       }
     });
+  })
+  .filter(function(item){
     //filters for events that already finished
-    filteredEvt = _.filter(filteredEvt, function(event){
-      return event.time + event.duration > time;
+    return item.time + item.duration > time; 
+  })
+  .filter(function(item){
+    //filters for foods terms and adds found food to json
+    var foodProvided = [];
+    if(!item.description){
+      return false;
+    }
+    _.each(foodPhrases.regexpList, function(regexp){
+      var matches = item.description.match(regexp) || [];
+      foodProvided = foodProvided.concat(matches);
     });
-    return filteredEvt;   
+    item.foodProvided = _.map(foodProvided, function(food){
+      return food.toLowerCase().trim();
+    });
+
+    return item.foodProvided.length > 0;
+  })
+  .filter(function(item){
+    //filters excluded terms from description
+    for(var i = 0; i < excludedPhrases.regexpList.length; i++){
+      var regexp = excludedPhrases.regexpList[i];
+      var matches = item.description.match(regexp);
+      if(matches){
+        return false;
+      }
+    }
+    return true;
   })
   .then(function(results){
-    //filters for foods terms and adds found foods to json
-    results = _.filter(results, function(item){
-      var hasFood = false;
-      var foodProvided = [];
-
-      _.each(foodPhrases.regexpList, function(regexp){
-        if(!item.description){
-          return;
-        }
-        var matches = item.description.match(regexp);
-        if(matches){
-          hasFood = true;
-          foodProvided = foodProvided.concat(matches);
-        }
-      });
-      foodProvided = _.map(foodProvided, function(food){
-        return food.toLowerCase().trim();
-      });
-      item.foodProvided = foodProvided;
-      return hasFood;
-    });
-    //filters for excluded terms
-    results = _.filter(results, function(item){
-      var isValid = true;
-      if(!item.description){
-        return;
-      }
-      _.each(excludedPhrases.regexpList, function(regexp){
-        var matches = item.description.match(regexp);
-        if(matches){
-          isValid = false;
-        }
-      });
-      return isValid;
-    });
     console.log("Results returned:", results.length);
-    res.send({results:results, status:"OK"});
+    res.send(200, {results:results, status:"OK"});
   })
   .catch(function(err){
-    console.log(err);
-    res.send(400, {results:results, status:err});
+    console.log("Error:", err);
+    res.send(400, {results:[], status:err+""});
   });
 });
 
