@@ -46,68 +46,73 @@ app.get('/api', function(req, res){
     }
     console.log("Lat:", data.lat, "Long:", data.lng, "Status: OK");
     
-    return db.meetup.find({time:{$gt:time-5*60*60*1000}}).limit(1000).toArray().then(function(events) {
-      var i = 1;
-      var dist = null;
-      var evtLat = null;
-      var evtLng = null;
-      var filteredEvt = _.filter(events, function(event){
-        evtLat = event.venue.address.latitude;
-        evtLng = event.venue.address.longitude;
-        if(evtLat !== null && evtLng !== null){
-          dist = distance(data.lat, data.lng, evtLat, evtLng);
-          if(dist < radius){
-            // console.log(i++, 'info: ', evtLat, evtLng, '\n distance:',dist);
-            event.distance = dist;
-            return event;
+    return db.meetup.find({time:{$gt:time-5*60*60*1000}}).limit(1000).toArray()
+    .then(function(events) {
+        var i = 1;
+        var dist = null;
+        var evtLat = null;
+        var evtLng = null;
+        var filteredEvt = _.filter(events, function(event){
+          evtLat = event.venue.address.latitude;
+          evtLng = event.venue.address.longitude;
+          if(evtLat !== null && evtLng !== null){
+            dist = distance(data.lat, data.lng, evtLat, evtLng);
+            if(dist < radius){
+              // console.log(i++, 'info: ', evtLat, evtLng, '\n distance:',dist);
+              event.distance = dist;
+              return event;
+            }
           }
-        }
-      });
-      //filters for events that already finished
-      filteredEvt = _.filter(filteredEvt, function(event){
-        return event.time + event.duration > time;
-      });
-      return filteredEvt;
-    });
-  }).then(function(results){
-    //filters for foods terms and adds found foods to json
-    results = _.filter(results, function(item){
-      var hasFood = false;
-      var foodProvided = [];
+        });
+        //filters for events that already finished
+        filteredEvt = _.filter(filteredEvt, function(event){
+          return event.time + event.duration > time;
+        });
+        return filteredEvt;
+      });   
+    }).then(function(results){
+      //filters for foods terms and adds found foods to json
+      results = _.filter(results, function(item){
+        var hasFood = false;
+        var foodProvided = [];
 
-      _.each(foodPhrases.regexpList, function(regexp){
+        _.each(foodPhrases.regexpList, function(regexp){
+          if(!item.description){
+            return;
+          }
+          var matches = item.description.match(regexp);
+          if(matches){
+            hasFood = true;
+            foodProvided = foodProvided.concat(matches);
+          }
+        });
+        foodProvided = _.map(foodProvided, function(food){
+          return food.toLowerCase().trim();
+        });
+        item.foodProvided = foodProvided;
+        return hasFood;
+      });
+      //filters for excluded terms
+      results = _.filter(results, function(item){
+        var isValid = true;
         if(!item.description){
           return;
         }
-        var matches = item.description.match(regexp);
-        if(matches){
-          hasFood = true;
-          foodProvided = foodProvided.concat(matches);
-        }
+        _.each(excludedPhrases.regexpList, function(regexp){
+          var matches = item.description.match(regexp);
+          if(matches){
+            isValid = false;
+          }
+        });
+        return isValid;
       });
-      foodProvided = _.map(foodProvided, function(food){
-        return food.toLowerCase().trim();
-      });
-      item.foodProvided = foodProvided;
-      return hasFood;
+      console.log("Results returned:", results.length);
+      res.send({results:results, status:"OK"});
+    })
+    .catch(function(err){
+      console.log(err);
+      res.send(400, {results:results, status:err});
     });
-    //filters for excluded terms
-    results = _.filter(results, function(item){
-      var isValid = true;
-      if(!item.description){
-        return;
-      }
-      _.each(excludedPhrases.regexpList, function(regexp){
-        var matches = item.description.match(regexp);
-        if(matches){
-          isValid = false;
-        }
-      });
-      return isValid;
-    });
-    console.log("Results returned:", results.length);
-    res.send({results:results, status:"OK"});
-  });
 });
 
 app.listen(app.get('port'), function(){
