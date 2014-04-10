@@ -9,7 +9,7 @@ var _ = require('underscore');
 
 //Adding access to the database
 var pmongo = require('promised-mongo');
-var db = pmongo(process.env.MONGOURL, ['meetup']);
+var db = pmongo(process.env.MONGOURL, ['meetup', 'eventbrite']);
 
 var app = express();
 
@@ -28,14 +28,17 @@ setInterval(function(){
 //example of a query /testdb?address
 app.get('/api', function(req, res){
   res.header("Access-Control-Allow-Origin", "*");
-  var address = req.query.address || "";
+  // Below changed the default address for testing purposes
+  var address = req.query.address || 94108;
   var time = new Date().getTime();
   var radius = req.query.radius || 5;
   var googleApiKey = process.env.GOOGLEAPIKEY || "123FAKEKEY";
   console.log("address:", address, "time:", time);
 
+  // qs : object containing querystring values to be appended to the uri 
   request.getAsync({url:"https://maps.googleapis.com/maps/api/geocode/json", qs:{key:googleApiKey, sensor:"false", address:address}})
   .then(function(args){
+
     var body = JSON.parse(args[1]);
     if(body.status === "OK"){
       var lat = body.results[0].geometry.location.lat;
@@ -48,16 +51,20 @@ app.get('/api', function(req, res){
   })
   .then(function(data){
     return Promise.all([
-      db.meetup.find({time:{$gt:time-5*60*60*1000}}).limit(1000).toArray(), 
+      db.meetup.find({time:{$gt:time-5*60*60*1000}}).limit(1000).toArray(),
+      db.eventbrite.find({time:{$gt:time-5*60*60*1000}}).limit(1000).toArray(),
       data
     ]);
   })
-  .spread(function(events, data) {
-    var i = 1;
+  .spread(function(meetup, eventbrite, data) {
+    //here we concatenate the meetup and eventbrite results
+    var allEvents = meetup.concat(eventbrite);
+
+    // var i = 1;
     var dist = null;
     var evtLat = null;
     var evtLng = null;
-    return _.filter(events, function(item){
+    return _.filter(allEvents, function(item){
       evtLat = item.venue.address.latitude;
       evtLng = item.venue.address.longitude;
       if(evtLat !== null && evtLng !== null){
