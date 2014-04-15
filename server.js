@@ -9,7 +9,7 @@ var _ = require('underscore');
 
 //Adding access to the database
 var pmongo = require('promised-mongo');
-var db = pmongo(process.env.MONGOURL, ['meetup', 'eventbrite']);
+var db = pmongo(process.env.MONGOURL, ['meetup', 'eventbrite', 'funcheap']);
 
 var app = express();
 
@@ -53,12 +53,15 @@ app.get('/api', function(req, res){
     return Promise.all([
       db.meetup.find({time:{$gt:time-5*60*60*1000}}).limit(1000).toArray(),
       db.eventbrite.find({time:{$gt:time-5*60*60*1000}}).limit(1000).toArray(),
+      db.funcheap.find({time:{$gt:time-5*60*60*1000}}).limit(1000).toArray(),
       data
     ]);
   })
-  .spread(function(meetup, eventbrite, data) {
-    //here we concatenate the meetup and eventbrite results
-    var allEvents = meetup.concat(eventbrite);
+  .spread(function(meetup, eventbrite, funcheap, data) {
+    // concat the meetup, eventbrite and funcheap results
+    var allEvents = _.union(meetup, eventbrite, funcheap);
+    // order them by time
+    allEvents = _.sortBy(allEvents, function(o) { return o.time; });
 
     // var i = 1;
     var dist = null;
