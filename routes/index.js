@@ -33,9 +33,13 @@ exports.events = function(req, res){
   console.log("address:", address, "time:", time);
 
   // qs : object containing querystring values to be appended to the uri 
+  
+
+  /**
+   * Converting the Address to latitude and longitude data
+   */
   request.getAsync({url:"https://maps.googleapis.com/maps/api/geocode/json", qs:{key:googleApiKey, sensor:"false", address:address}})
   .then(function(args){
-
     var body = JSON.parse(args[1]);
     if(body.status === "OK"){
       var lat = body.results[0].geometry.location.lat;
@@ -46,6 +50,10 @@ exports.events = function(req, res){
       throw "API Error: "+body.status;
     }
   })
+
+  /**
+   * Getting the next events from the different collections
+   */
   .then(function(data){
     return Promise.all([
       db.meetup.find({time:{$gt:time-5*60*60*1000}}).limit(1000).toArray(),
@@ -54,6 +62,10 @@ exports.events = function(req, res){
       data
     ]);
   })
+  
+  /**
+   * Getting the next events from the different collections
+   */
   .spread(function(meetup, eventbrite, funcheap, data) {
     // concat the meetup, eventbrite and funcheap results
     var allEvents = _.union(meetup, eventbrite, funcheap);
@@ -75,10 +87,17 @@ exports.events = function(req, res){
       }
     });
   })
+
+  /**
+   * Taking out the finished events from the results
+   */
   .filter(function(item){
-    //filters for events that already finished
     return item.time + item.duration > time; 
   })
+
+  /**
+   * Retrieve events that have Our FoodPhrases in description
+   */
   .filter(function(item){
     //filters for foods terms and adds found food to json
     var foodProvided = [];
@@ -95,6 +114,10 @@ exports.events = function(req, res){
 
     return item.foodProvided.length > 0;
   })
+
+  /**
+   * Exclude events that have excluded Phrases in description
+   */
   .filter(function(item){
     //filters excluded terms from description
     for(var i = 0; i < excludedPhrases.regexpList.length; i++){
@@ -106,6 +129,10 @@ exports.events = function(req, res){
     }
     return true;
   })
+
+  /**
+   * Return the filtered events
+   */
   .then(function(results){
     console.log("Results returned:", results.length);
     res.send({results:results, status:"OK"});
