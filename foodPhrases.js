@@ -18,4 +18,5 @@ exports.regexpList = [
   /cookies?/i,
   /grub/i,
   /beverages?/i,
+  // /cupcakess?/i,
 ];
