@@ -18,4 +18,8 @@ exports.regexpList = [
   /cookies?/i,
   /grub/i,
   /beverages?/i,
+  /cupcakes?/i,
+  /desserts?/i,
+  // /treats?/i,
+  // /(\W|^)pies?/i,
 ];
