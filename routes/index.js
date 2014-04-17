@@ -17,7 +17,7 @@ var excludedPhrases = require('../excludedPhrases');
  * Database access
  */
 var pmongo = require('promised-mongo');
-var db = pmongo(process.env.MONGOURL, ['meetup', 'eventbrite', 'funcheap']);
+var db = Promise.promisifyAll(pmongo(process.env.MONGOURL, ['meetup','eventbrite','funcheap','coordsTable']));
 
 /**
  * Main Function
@@ -26,35 +26,57 @@ var db = pmongo(process.env.MONGOURL, ['meetup', 'eventbrite', 'funcheap']);
 exports.events = function(req, res){
   res.header("Access-Control-Allow-Origin", "*");
   // Below changed the default address for testing purposes
-  var address = req.query.address || 94108;
-  var time = new Date().getTime();
+  var address = req.query.address || '94108';
+  console.log('address: ',address);
+  var time = req.query.time || new Date().getTime();
   var radius = req.query.radius || 5;
   var googleApiKey = process.env.GOOGLEAPIKEY || "123FAKEKEY";
-  console.log("address:", address, "time:", time);
+  // console.log("address:", address, "time:", time);
 
-  // qs : object containing querystring values to be appended to the uri 
+  // to Prevent a call to the google maps api and stay under the 2500 request a day,
+  // we store the adresses that have been queried in an address collection
   
-
+  // if the address is in the collection, we retrieve the latitude and longitude stored 
+  // otherwise we send a request to the google maps api
+  var checkCoords = function(address){
+    return db.coordsTable.findOne({address: address.toLowerCase().trim()})
+      .then(function(result){
+        if(result){
+          console.log('from database');
+          return {lat: result.lat, lng: result.lng};
+        }else{
+          console.log('not in database');
+          return googleMapsRequest(address);
+        }
+      });
+    };
   /**
    * Converting the Address to latitude and longitude data
    */
-  request.getAsync({url:"https://maps.googleapis.com/maps/api/geocode/json", qs:{key:googleApiKey, sensor:"false", address:address}})
-  .then(function(args){
-    var body = JSON.parse(args[1]);
-    if(body.status === "OK"){
-      var lat = body.results[0].geometry.location.lat;
-      var lng = body.results[0].geometry.location.lng;
-      console.log("Lat:", lat, "Long:", lng, "Status: OK");
-      return {lat: lat, lng:lng};
-    }else {
-      throw "API Error: "+body.status;
-    }
-  })
+  // qs : object containing querystring values to be appended to the uri 
+  var googleMapsRequest = function(address){
+    return request.getAsync({url:"https://maps.googleapis.com/maps/api/geocode/json", qs:{key:googleApiKey, sensor:"false", address:address}})
+      .then(function(args){
+        var body = JSON.parse(args[1]);
+        if(body.status === "OK"){
+          var lat = body.results[0].geometry.location.lat;
+          var lng = body.results[0].geometry.location.lng;
+          console.log("Lat:", lat, "Long:", lng, "Status: OK");
+          //database insertion
+          db.coordsTable.save({address:address.toLowerCase().trim(),lat: lat,lng: lng});
+          return {lat: lat, lng: lng};
+        }else {
+          throw "API Error: "+body.status;
+        }
+      });
+  };
 
   /**
    * Getting the next events from the different collections
    */
-  .then(function(data){
+
+  Promise.all([checkCoords(address)]).spread(function(data){
+    // console.log('google Maps coords from then1:',data);
     return Promise.all([
       db.meetup.find({time:{$gt:time-5*60*60*1000}}).limit(1000).toArray(),
       db.eventbrite.find({time:{$gt:time-5*60*60*1000}}).limit(1000).toArray(),
@@ -67,10 +89,9 @@ exports.events = function(req, res){
    * Getting the next events from the different collections
    */
   .spread(function(meetup, eventbrite, funcheap, data) {
+    // console.log('google Maps coords from then2:',data)
     // concat the meetup, eventbrite and funcheap results
     var allEvents = _.union(meetup, eventbrite, funcheap);
-    // order them by time
-    allEvents = _.sortBy(allEvents, function(o) { return o.time; });
 
     // var i = 1;
     var dist = null;
@@ -95,9 +116,22 @@ exports.events = function(req, res){
     return item.time + item.duration > time; 
   })
 
-  /**
-   * Retrieve events that have Our FoodPhrases in description
-   */
+  // /**
+  //  * Remove items that have excluded terms in the venue names
+  //  */
+  .filter(function(item){
+    // console.log('\n\n',excludedPhrases.venueTerms);
+    _.each(excludedPhrases.venueTerms, function(exp){
+      // console.log(item.venue.name);
+      if(item.venue.name.match(exp)) item.excluded = true;
+    });
+    // return item.excluded === false;
+    return !item.excluded;
+  })
+
+  // /**
+  //  * Retrieve events that have Our FoodPhrases in description
+  //  */
   .filter(function(item){
     //filters for foods terms and adds found food to json
     var foodProvided = [];
@@ -115,9 +149,9 @@ exports.events = function(req, res){
     return item.foodProvided.length > 0;
   })
 
-  /**
-   * Exclude events that have excluded Phrases in description
-   */
+  // /**
+  //  * Exclude events that have excluded Phrases in description
+  //  */
   .filter(function(item){
     //filters excluded terms from description
     for(var i = 0; i < excludedPhrases.regexpList.length; i++){
@@ -134,7 +168,9 @@ exports.events = function(req, res){
    * Return the filtered events
    */
   .then(function(results){
-    console.log("Results returned:", results.length);
+    // order them by time
+    results = _.sortBy(results, function(o) { return o.time; });
+    // console.log("Results returned:", results.length);
     res.send({results:results, status:"OK"});
   })
   .catch(function(err){
