@@ -74,14 +74,16 @@ exports.events = function(req, res){
   /************************************************************************
    * Getting the next events from the different collections
    ***********************************************************************/
-
+  var lat;
+  var lng;
   Promise.all([checkCoords(address)]).spread(function(data){
     // console.log('google Maps coords from then1:',data);
     db.meetup.ensureIndex({location:"2d"});
     db.funcheap.ensureIndex({location:"2d"});
     db.eventbrite.ensureIndex({location:"2d"});
     console.log(data.lng, data.lat);
-
+    lat = data.lat;
+    lng = data.lng;
     return Promise.all([
       db.meetup.find({
         // { time: { $gt: time-5*60*60*1000 } },
@@ -183,7 +185,15 @@ exports.events = function(req, res){
     }
     return true;
   })
-
+  .filter(function(item){
+    var evtLat = item.venue.address.latitude;
+    var evtLng = item.venue.address.longitude;
+    if(evtLat !== null && evtLng !== null){
+      dist = distance(lat, lng, evtLat, evtLng);
+      item.distance = dist;
+      return dist < radius;
+    }
+  })
   /************************************************************************
    * Return the filtered events
    ***********************************************************************/
@@ -201,7 +211,19 @@ exports.events = function(req, res){
 /************************************************************************
  * Extra Functions
  ***********************************************************************/
-
+function distance(lat1, lon1, lat2, lon2) {
+   var radlat1 = Math.PI * lat1/180;
+   var radlat2 = Math.PI * lat2/180;
+   var radlon1 = Math.PI * lon1/180;
+   var radlon2 = Math.PI * lon2/180;
+   var theta = lon1-lon2;
+   var radtheta = Math.PI * theta/180;
+   var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+   dist = Math.acos(dist);
+   dist = dist * 180/Math.PI;
+   dist = dist * 60 * 1.1515;
+   return dist;
+ }
 setInterval(function(){
   db.runCommand({ping:1})
   .then(function(res) {
