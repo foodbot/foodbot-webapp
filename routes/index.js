@@ -1,27 +1,27 @@
 
-/**
+/************************************************************************
  * Module dependencies
- */
+ ***********************************************************************/
 var Promise = require('bluebird');
 var http = require('http');
 var request = Promise.promisifyAll(require('request'));
 var _ = require('underscore');
 
-/**
+/************************************************************************
  * Other dependencies
- */
+ ***********************************************************************/
 var foodPhrases = require('../foodPhrases');
 var excludedPhrases = require('../excludedPhrases');
 
-/**
+/************************************************************************
  * Database access
- */
+ ***********************************************************************/
 var pmongo = require('promised-mongo');
 var db = Promise.promisifyAll(pmongo(process.env.MONGOURL, ['meetup','eventbrite','funcheap','coordsTable']));
 
-/**
+/************************************************************************
  * Main Function
- */
+ ***********************************************************************/
 
 exports.events = function(req, res){
   res.header("Access-Control-Allow-Origin", "*");
@@ -50,9 +50,9 @@ exports.events = function(req, res){
         }
       });
     };
-  /**
+  /************************************************************************
    * Converting the Address to latitude and longitude data
-   */
+   ***********************************************************************/
   // qs : object containing querystring values to be appended to the uri 
   var googleMapsRequest = function(address){
     return request.getAsync({url:"https://maps.googleapis.com/maps/api/geocode/json", qs:{key:googleApiKey, sensor:"false", address:address}})
@@ -71,75 +71,94 @@ exports.events = function(req, res){
       });
   };
 
-  /**
+  /************************************************************************
    * Getting the next events from the different collections
-   */
+   ***********************************************************************/
 
   Promise.all([checkCoords(address)]).spread(function(data){
     // console.log('google Maps coords from then1:',data);
+    db.meetup.ensureIndex({location:"2d"});
+    db.funcheap.ensureIndex({location:"2d"});
+    db.eventbrite.ensureIndex({location:"2d"});
+    console.log(data.lng, data.lat);
+
     return Promise.all([
-      db.meetup.find({time:{$gt:time-5*60*60*1000}}).limit(1000).toArray(),
-      db.eventbrite.find({time:{$gt:time-5*60*60*1000}}).limit(1000).toArray(),
-      db.funcheap.find({time:{$gt:time-5*60*60*1000}}).limit(1000).toArray(),
+      db.meetup.find({
+        // { time: { $gt: time-5*60*60*1000 } },
+        // { location : { $geoWithin : { $centerSphere : [ [ data.lng, data.lat ], radius / 3959 ] } } }
+         $and: [
+            { location : { $geoWithin : { $centerSphere : [ [ data.lng, data.lat ], radius / 3959 ] } } },
+            { time: { $gt: time-5*60*60*1000 } }
+            ]
+          })
+        .limit(1000)
+        .toArray(),
+      
+      db.eventbrite.find(
+          { $and: [
+            { location : { $geoWithin : { $centerSphere : [ [ data.lng, data.lat ], radius / 3959 ] } } },
+            { time: { $gt: time-5*60*60*1000 } }
+            ]
+          })
+          .limit(1000)
+          .toArray(),
+      
+      db.funcheap.find(
+          { $and: [
+            { location : { $geoWithin : { $centerSphere : [ [ data.lng, data.lat ], radius / 3959 ] } } },
+            { time: { $gt: time-5*60*60*1000 } }
+            ]
+          })
+          .limit(1000)
+          .toArray(),
       data
     ]);
   })
   
-  /**
+  /**********************************************************************
    * Getting the next events from the different collections
-   */
+   **********************************************************************/
   .spread(function(meetup, eventbrite, funcheap, data) {
-    // console.log('google Maps coords from then2:',data)
     // concat the meetup, eventbrite and funcheap results
     var allEvents = _.union(meetup, eventbrite, funcheap);
-
-    // var i = 1;
-    var dist = null;
-    var evtLat = null;
-    var evtLng = null;
-    return _.filter(allEvents, function(item){
-      evtLat = item.venue.address.latitude;
-      evtLng = item.venue.address.longitude;
-      if(evtLat !== null && evtLng !== null){
-        dist = distance(data.lat, data.lng, evtLat, evtLng);
-        item.distance = dist;
-        // console.log(i++, 'info: ', evtLat, evtLng, '\n distance:',dist);
-        return dist < radius;
-      }
-    });
+    return allEvents;
   })
 
-  /**
+  /**********************************************************************
    * Taking out the finished events from the results
-   */
+   **********************************************************************/
   .filter(function(item){
     return item.time + item.duration > time; 
   })
 
-  // /**
-  //  * Remove items that have excluded terms in the venue names
-  //  */
+  /**********************************************************************
+   * Remove items that have excluded terms in the venue names
+   **********************************************************************/
   .filter(function(item){
     // console.log('\n\n',excludedPhrases.venueTerms);
-    _.each(excludedPhrases.venueTerms, function(exp){
-      // console.log(item.venue.name);
-      if(item.venue.name.match(exp)) item.excluded = true;
+    _.each(excludedPhrases.venueTerms, function(regexp){
+      // console.log(item.name);
+      if(item.name.match(regexp)) item.excluded = true;
+      // item.name = item.name.replace(regexp, '<strong><span class="label label-warning">'+regexp+'</span></strong>');
     });
-    // return item.excluded === false;
     return !item.excluded;
+    // return item;
   })
 
-  // /**
-  //  * Retrieve events that have Our FoodPhrases in description
-  //  */
+  /************************************************************************
+   * Retrieve events that have Our FoodPhrases in description
+   ***********************************************************************/
   .filter(function(item){
     //filters for foods terms and adds found food to json
     var foodProvided = [];
     if(!item.description){
       return false;
     }
+    // console.log(item.description);
     _.each(foodPhrases.regexpList, function(regexp){
       var matches = item.description.match(regexp) || [];
+      // item.description = item.description.replace(regexp, '<strong><span class="label label-success">'+regexp+'</span></strong>');
+      // console.log(regexp);
       foodProvided = foodProvided.concat(matches);
     });
     item.foodProvided = _.map(foodProvided, function(food){
@@ -149,14 +168,15 @@ exports.events = function(req, res){
     return item.foodProvided.length > 0;
   })
 
-  // /**
-  //  * Exclude events that have excluded Phrases in description
-  //  */
+  /************************************************************************
+   * Exclude events that have excluded Phrases in description
+   ***********************************************************************/
   .filter(function(item){
     //filters excluded terms from description
     for(var i = 0; i < excludedPhrases.regexpList.length; i++){
       var regexp = excludedPhrases.regexpList[i];
       var matches = item.description.match(regexp);
+      // item.description = item.description.replace(regexp, '<strong><span class="label label-danger">'+regexp+'</span></strong>');
       if(matches){
         return false;
       }
@@ -164,13 +184,12 @@ exports.events = function(req, res){
     return true;
   })
 
-  /**
+  /************************************************************************
    * Return the filtered events
-   */
+   ***********************************************************************/
   .then(function(results){
-    // order them by time
-    results = _.sortBy(results, function(o) { return o.time; });
     // console.log("Results returned:", results.length);
+    results = _.sortBy(results, function(o) { return o.time; });
     res.send({results:results, status:"OK"});
   })
   .catch(function(err){
@@ -179,22 +198,9 @@ exports.events = function(req, res){
   });
 };
 
-/**
+/************************************************************************
  * Extra Functions
- */
-function distance(lat1, lon1, lat2, lon2) {
-  var radlat1 = Math.PI * lat1/180;
-  var radlat2 = Math.PI * lat2/180;
-  var radlon1 = Math.PI * lon1/180;
-  var radlon2 = Math.PI * lon2/180;
-  var theta = lon1-lon2;
-  var radtheta = Math.PI * theta/180;
-  var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-  dist = Math.acos(dist);
-  dist = dist * 180/Math.PI;
-  dist = dist * 60 * 1.1515;
-  return dist;
-}
+ ***********************************************************************/
 
 setInterval(function(){
   db.runCommand({ping:1})

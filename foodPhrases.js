@@ -20,6 +20,11 @@ exports.regexpList = [
   /beverages?/i,
   /cupcakes?/i,
   /desserts?/i,
-  // /treats?/i,
-  // /(\W|^)pies?/i,
+  /tacos?/i,
+  /cocktails?/i,
+  /munchies?/i,
+  /pancakes?/i,
+  /cheeses?/i,
+  // /^treats?/i,
+  // /^pies?/i,
 ];
