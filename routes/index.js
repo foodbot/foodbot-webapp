@@ -185,14 +185,15 @@ exports.events = function(req, res){
     }
     return true;
   })
-  .filter(function(item){
+  .map(function(item){
     var evtLat = item.venue.address.latitude;
     var evtLng = item.venue.address.longitude;
     if(evtLat !== null && evtLng !== null){
       dist = distance(lat, lng, evtLat, evtLng);
       item.distance = dist;
-      return dist < radius;
+      // return dist < radius;
     }
+    return item;
   })
   /************************************************************************
    * Return the filtered events
