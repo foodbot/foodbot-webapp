@@ -17,7 +17,7 @@ var excludedPhrases = require('../excludedPhrases');
  * Database access
  ***********************************************************************/
 var pmongo = require('promised-mongo');
-var db = Promise.promisifyAll(pmongo(process.env.MONGOURL, ['meetup','eventbrite','funcheap','coordsTable']));
+var db = Promise.promisifyAll(pmongo(process.env.MONGOURL, ['meetup','eventbrite','funcheap','facebook','coordsTable']));
 
 /************************************************************************
  * Main Function
@@ -80,9 +80,21 @@ exports.events = function(req, res){
     db.meetup.ensureIndex({location:"2d"});
     db.funcheap.ensureIndex({location:"2d"});
     db.eventbrite.ensureIndex({location:"2d"});
+    db.facebook.ensureIndex({location:"2d"});
+
     console.log(data.lng, data.lat);
 
     return Promise.all([
+      db.facebook.find(
+          { $and: [
+            { "venue.address.city": "San Francisco" },
+            { location : { $geoWithin : { $centerSphere : [ [ data.lng, data.lat ], radius / 3959 ] } } },
+            { time: { $gt: time-5*60*60*1000 } }
+            ]
+          })
+          .limit(1000)
+          .toArray(),
+
       db.meetup.find({
         // { time: { $gt: time-5*60*60*1000 } },
         // { location : { $geoWithin : { $centerSphere : [ [ data.lng, data.lat ], radius / 3959 ] } } }
@@ -118,9 +130,9 @@ exports.events = function(req, res){
   /**********************************************************************
    * Getting the next events from the different collections
    **********************************************************************/
-  .spread(function(meetup, eventbrite, funcheap, data) {
+  .spread(function(meetup, eventbrite, funcheap, facebook, data) {
     // concat the meetup, eventbrite and funcheap results
-    var allEvents = _.union(meetup, eventbrite, funcheap);
+    var allEvents = _.union(meetup, eventbrite, funcheap, facebook);
     return allEvents;
   })
 
