@@ -9,7 +9,7 @@ var _ = require('underscore');
 
 /************************************************************************
  * Other dependencies
- ***********************************************************************/
+ ************************************* **********************************/
 var foodPhrases = require('../foodPhrases');
 var excludedPhrases = require('../excludedPhrases');
 
@@ -154,10 +154,10 @@ exports.events = function(req, res){
     _.each(excludedPhrases.venueTerms, function(regexp){
       // console.log(item.name);
       if(item.name.match(regexp)) item.excluded = true;
-      // item.name = item.name.replace(regexp, '<strong><span class="label label-warning">'+regexp+'</span></strong>');
+      item.name = item.name.replace(regexp, '<strong><span class="label label-warning">'+regexp+'</span></strong>');
     });
-    return !item.excluded;
-    // return item;
+    // return !item.excluded;
+    return item;
   })
 
   /************************************************************************
@@ -172,7 +172,7 @@ exports.events = function(req, res){
     // console.log(item.description);
     _.each(foodPhrases.regexpList, function(regexp){
       var matches = item.description.match(regexp) || [];
-      // item.description = item.description.replace(regexp, '<strong><span class="label label-success">'+regexp+'</span></strong>');
+      item.description = item.description.replace(regexp, '<strong><span class="label label-success">'+regexp+'</span></strong>');
       // console.log(regexp);
       foodProvided = foodProvided.concat(matches);
     });
@@ -191,10 +191,10 @@ exports.events = function(req, res){
     for(var i = 0; i < excludedPhrases.regexpList.length; i++){
       var regexp = excludedPhrases.regexpList[i];
       var matches = item.description.match(regexp);
-      // item.description = item.description.replace(regexp, '<strong><span class="label label-danger">'+regexp+'</span></strong>');
-      if(matches){
-        return false;
-      }
+      item.description = item.description.replace(regexp, '<strong><span class="label label-danger">'+regexp+'</span></strong>');
+      // if(matches){
+      //   return false;
+      // }
     }
     return true;
   })
