@@ -18,6 +18,7 @@ exports.regexpList = [
   /(\W|^)tickets?(\W|$)/i,
   /(\W|^)fees?(\W|$)/i,
   /(\W|^)sales?(\W|$)/i,
+  // /(\W|^)complimentary(\W|$)/i,
   // /(\W|^)farmers? markets?(\W|$)/i,
   /(\W|^)b\.?y\.?o\.?b?(\W|$)/i,
 ];

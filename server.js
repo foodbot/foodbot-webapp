@@ -4,6 +4,7 @@
  */
 var express = require('express');
 var routes = require('./routes/index');
+var test = require('./routes/test');
 
 var app = module.exports = express();
 
@@ -17,6 +18,7 @@ app.set('port', process.env.PORT || 3050);
  * Routes
  */
 app.get('/api', routes.events);
+app.get('/test', test.events);
 
 /**
  * Start Server
