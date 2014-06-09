@@ -1,0 +1,13 @@
+{
+  "name": "heatmap.js",
+  "homepage": "https://github.com/pa7/heatmap.js",
+  "_release": "0d925f85d7",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "0d925f85d750b89dfa7012d3029cc743fadcb8bc"
+  },
+  "_source": "https://github.com/pa7/heatmap.js.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/pa7/heatmap.js.git"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "ngmap",
+  "version": "0.3.11",
+  "dependencies": {},
+  "main": "./dist/ng-map.js",
+  "homepage": "https://github.com/allenhwkim/angularjs-google-maps",
+  "_release": "0.3.11",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.3.11",
+    "commit": "4086d523843ccb202048d94e43201ffa05f12ee5"
+  },
+  "_source": "https://github.com/allenhwkim/angularjs-google-maps.git",
+  "_target": "~0.3.8",
+  "_originalSource": "https://github.com/allenhwkim/angularjs-google-maps.git"
+}

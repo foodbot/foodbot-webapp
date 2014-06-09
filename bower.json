@@ -1,0 +1,34 @@
+{
+  "name": "public",
+  "version": "0.0.0",
+  "homepage": "https://github.com/fcolas6013/feed-me-client",
+  "authors": [
+    "Fabrice Colas <pub@grano-salis.net>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "directory": "vendor",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "underscore": "~1.6.0",
+    "moment": "~2.5.1",
+    "angular": "~1.2.16",
+    "angular-route": "~1.2.16",
+    "bootstrap": "~3.1.1",
+    "angular-google-maps": "~1.0.18",
+    "angular-moment": "~0.6.2",
+    "angularjs-google-maps": "https://github.com/allenhwkim/angularjs-google-maps.git#~0.3.8",
+    "angular-spinner": "~0.4.0",
+    "heatmap.js": "https://github.com/pa7/heatmap.js.git"
+  },
+  "resolutions": {
+    "underscore": "~1.5.x"
+  }
+}

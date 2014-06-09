@@ -3,7 +3,6 @@
 .DS_Store
 
 npm-debug.log
-node_modules
 azure.err
 run.sh
 Food.sublime-project
