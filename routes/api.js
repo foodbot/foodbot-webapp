@@ -23,7 +23,7 @@ var db = Promise.promisifyAll(pmongo(process.env.MONGOURL, ['meetup','eventbrite
  * Main Function
  ***********************************************************************/
 
-exports.events = function(req, res){
+module.exports = function(req, res){
   res.header("Access-Control-Allow-Origin", "*");
   // Below changed the default address for testing purposes
   var address = req.query.address || '94108';

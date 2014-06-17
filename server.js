@@ -3,7 +3,7 @@
  * Module dependencies
  */
 var express = require('express');
-var routes = require('./routes/index');
+var api = require('./routes/api');
 var test = require('./routes/test');
 var path = require('path');
 var app = module.exports = express();
@@ -12,15 +12,15 @@ var app = module.exports = express();
  * Configuration
  */
 
-app.set('port', process.env.PORT || 3050);
+app.set('port', process.env.PORT || 8080);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 /**
  * Routes
  */
-app.get('/api', routes.events);
-app.get('/test', test.events);
+app.get('/api', api);
+app.get('/test', test);
 
 /**
  * Start Server
