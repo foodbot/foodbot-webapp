@@ -1,0 +1,106 @@
+<div class="table-responsive col-xs-8 text-left" style="height:{{ tableHeight }}px;
+overflow: auto; overflow-y:scroll;margin:0px;padding:0px">
+
+  <table class="table table-condensed table-hover" style="background-color:white;table-layout: fixed;border:grey;border-width:1px;">
+    <tr>
+      <th width="20%">
+        <button width="100%" type="button" class="btn btn-sm" 
+          ng-class="{active: predicate == 'time'}"
+          ng-click="predicate = 'time'">
+          <div class="glyphicon glyphicon-time"/></span>
+          <div class="glyphicon glyphicon-sort-by-attributes"/>
+        </button>
+      </th>
+      <th width="52%">Event</th>
+      <th width="10%">
+        <button type="button" class="btn btn-sm" 
+          ng-class="{active: predicate == 'distance'}"
+          ng-click="predicate = 'distance'">
+          <div class="glyphicon glyphicon-hand-right"/></span>
+          <div class="glyphicon glyphicon-sort-by-attributes"/>
+        </button>
+      </th>
+      <th width="7.5%">Www</th>
+      <th width="9.5%">Route</th>
+    </tr>
+  
+    <tr style="border-top-style:solid; border-top-color:#BBBBBB; border-top-width:1px" 
+      ng-repeat="event in events | filter:isVisible | orderBy: predicate: reverse " >
+      <td width="120px" 
+        ng-mouseover="event.highlightMarker();" ng-mouseout="event.normalizeMarker();">
+        <span style="color:#888">{{ event.timeFMT | capitalize }}</span>
+
+        <button 
+          type="button" 
+          class="btn btn-sm" 
+          style="float:right"
+          ng-show="event.showDescription " 
+          ng-click="event.showDescription = !event.showDescription"> 
+          <span class="glyphicon glyphicon-resize-small"/>
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-sm" 
+          style="float:right" 
+          ng-show="!event.showDescription " 
+          ng-click="event.showDescription = !event.showDescription" >
+          <span class="glyphicon glyphicon-resize-full"/>
+        </button>
+      </td>
+
+      <td  
+        ng-click="event.showDescription = !event.showDescription" 
+        ng-mouseover="event.highlightMarker();"
+        ng-mouseout="event.normalizeMarker()"
+        onmouseover="" style="cursor: pointer;">
+
+        <b style="color:#222">{{ event.name | capitalize }}</b>
+         <p style="color:#444;line-height:1.5" class="text-justify" ng-show="event.showDescription"> {{event.text}} </p>
+        <span ng-repeat="item in event.foodProvided"
+          ng-click="event.showTags = !event.showTags"
+          ng-show="!event.showTags">
+          <img src="/assets/by-jacob-halton/icon_4131.svg" class="tag"
+            alt="Wine" ng-show="item == 'pastry'" />
+          <img src="/assets/by-edward-boatman/icon_332.svg" class="tag"
+            alt="Wine" ng-show="item == 'wine' || item == 'drinks'" />
+          <img src="/assets/by-charlotte-vogel/icon_6996.svg" class="tag"
+            alt="Sushi" ng-show="item == 'sushi' || item == 'sushis'" />
+          <img src="/assets/public-domain/icon_17562.svg" class="tag"
+            alt="Food/Snacks" ng-show="item == 'food' || item == 'snacks'" />
+          <img src="/assets/by-edward-boatman/icon_593.svg" class="tag"
+            alt="Beer" ng-show="item == 'beer' || item == 'beers'" />
+          <img src="/assets/by-stanislav-levin/icon_13158.svg" class="tag"
+            alt="Pizza" ng-show="item == 'pizza' || item == 'pizzas'" />
+          <img src="/assets/by-dmitry-baranovskiy/icon_10959.svg" class="tag"
+            alt="Coffee" ng-show="item == 'coffee'" />
+        </span>
+        <span ng-repeat="item in event.foodProvided" class="badge"
+          style="float:right;margin:0 4px 0 4px"
+          ng-click="event.showTags = !event.showTags"
+          ng-show="event.showTags"> {{item}} </span>
+      </td>
+
+      <td width="140px" 
+        ng-click="showRoute(event)"
+        ng-mouseover="event.highlightMarker();"
+        ng-mouseout="event.normalizeMarker();" style="text-align:right">
+        <span style="color:#888">
+          At {{ event.distance | number:1 }} mi. 
+        </span>
+      </td>
+      <td>
+        <button type="button" class="btn btn-sm"> 
+          <a href="{{event.unique}}" target="_blank">
+            <span class="glyphicon glyphicon-link" style="height:20px;"></span>
+          </a>
+        </button>
+      </td>
+      <td>
+        <button type="button" class="btn btn-sm" ng-click="showRoute(event)"> 
+          <img src="/assets/by-melvin-popelaars/icon_29608.svg" style="height:20px"class="tag" />
+        </button>
+      </td>
+    </tr>
+  </table>
+
+</div>

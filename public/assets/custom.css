@@ -9,7 +9,10 @@
 a {
   color:#444444;
 }
-
+.container {
+  width: 1170px;
+  max-width: none !important;
+}
 map, div[map] {
   display : block; 
   opacity : 1;

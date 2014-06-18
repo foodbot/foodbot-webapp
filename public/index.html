@@ -4,52 +4,55 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Food Bot . IO</title>
+    <title>Foodbot.io | Find Free Food in San Francisco!</title>
+    <meta name="description" content="Find Free Food in the San Francisco area!">
+    <meta name="keywords" content="free, food, events">
     <!-- BOOTSTRAP-CSS-->
     <link href="/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
     <link href="/assets/custom.css" rel="stylesheet">
+
+    <!-- JQUERY & BOOTSTRAP -->
+    <script src="/lib/jquery/dist/jquery.js"></script>
+    <script src="/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="/lib/bootstrap/js/button.js"></script>
+
+    <!-- LIBS-->
+    <script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
+    <script src="/lib/moment/moment.js"></script>
+    <script src="/lib/underscore/underscore.js"></script>
+    <script src="/lib/angular/angular.js"></script>
+    <script src="/lib/angular-route/angular-route.js"></script>
+    <script src="/lib/angular-moment/angular-moment.js"></script>
+    <script src="/lib/angularjs-google-maps/dist/ng-map.js"></script>
+    <script src="/lib/spin.js/spin.js"></script>
+    <script src="/lib/angular-spinner/angular-spinner.js"></script>
+
+    <!-- APP -->
+    <script src="/js/app.js"></script>
+    <script src="/js/modules/fbLogo/fbLogo.js"></script>
+    <script src="/js/modules/fbControlMenu/fbControlMenu.js"></script>
+    <script src="/js/modules/fbEventsDisplay/fbEventsDisplay.js"></script>
+    <script src="/js/constants/mapOptions.js"></script>
+    <script src="/js/constants/highlightMarkerUri.js"></script>
+    <script src="/js/constants/normalMarkerUri.js"></script>
+    <script src="/js/constants/pinMarkerUri.js"></script>
+    <script src="/js/filters/capitalize.js"></script>
+    <script src="/js/filters/time.js"></script>
+    <script src="/js/filters/radius.js"></script>
+    <script src="/js/filters/isVisible.js"></script>
+    <script src="/js/services/time.js"></script>
+    <script src="/js/services/counts.js"></script>
+    <script src="/js/services/spinner.js"></script>
+    <script src="/js/services/map.js"></script>
+    <script src="/js/services/mapRoute.js"></script>
+    <script src="/js/services/mapMarker.js"></script>
+    <script src="/js/services/mapCenter.js"></script>
+    <script src="/js/services/geoapi.js"></script>
+    <script src="/js/services/feedme.js"></script>
   </head>
   <body ng-app='myApp'>
 
   <div class="container" ng-view></div>
-
-  <!-- JQUERY & BOOTSTRAP -->
-  <script src="/lib/jquery/dist/jquery.js"></script>
-  <script src="/lib/bootstrap/dist/js/bootstrap.js"></script>
-  <script src="/lib/bootstrap/js/button.js"></script>
-
-  <!-- LIBS-->
-  <script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
-  <script src="/lib/moment/moment.js"></script>
-  <script src="/lib/underscore/underscore.js"></script>
-  <script src="/lib/angular/angular.js"></script>
-  <script src="/lib/angular-route/angular-route.js"></script>
-  <script src="/lib/angular-moment/angular-moment.js"></script>
-  <script src='/lib/angular-google-maps/dist/angular-google-maps.js'></script>
-  <script src="/lib/angularjs-google-maps/dist/ng-map.js"></script>
-  <script src="/lib/spin.js/spin.js"></script>
-  <script src="/lib/angular-spinner/angular-spinner.js"></script>
-
-  <!-- APP -->
-  <script src="/app.js"></script>
-  <script src="/constants/mapOptions.js"></script>
-  <script src="/constants/highlightMarkerUri.js"></script>
-  <script src="/constants/normalMarkerUri.js"></script>
-  <script src="/constants/pinMarkerUri.js"></script>
-  <script src="/filters/capitalize.js"></script>
-  <script src="/filters/time.js"></script>
-  <script src="/filters/radius.js"></script>
-  <script src="/filters/isVisible.js"></script>
-  <script src="/services/time.js"></script>
-  <script src="/services/counts.js"></script>
-  <script src="/services/spinner.js"></script>
-  <script src="/services/map.js"></script>
-  <script src="/services/mapRoute.js"></script>
-  <script src="/services/mapMarker.js"></script>
-  <script src="/services/mapCenter.js"></script>
-  <script src="/services/geoapi.js"></script>
-  <script src="/services/feedme.js"></script>
-  <script src="/controllers/index.js"></script>
 
  </body>
 </html>
