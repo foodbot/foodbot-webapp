@@ -1,6 +1,6 @@
-var fbLogo = angular.module('fbLogo', []);
+angular.module('app.home.logo', [])
 
-fbLogo.directive("fbLogo", function(){
+.directive("fbLogo", function(){
   var template ='<div class="row" >'+
                   '<div class="col-xs-4 text-center">'+
                     '<div class="logoBg">'+

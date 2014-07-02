@@ -28,29 +28,27 @@
     <script src="/lib/angular-spinner/angular-spinner.js"></script>
 
     <!-- APP -->
-    <script src="/js/app.js"></script>
-    <script src="/js/modules/fbLogo/fbLogo.js"></script>
-    <script src="/js/modules/fbControlMenu/fbControlMenu.js"></script>
-    <script src="/js/modules/fbEventsDisplay/fbEventsDisplay.js"></script>
-    <script src="/js/constants/mapOptions.js"></script>
-    <script src="/js/constants/highlightMarkerUri.js"></script>
-    <script src="/js/constants/normalMarkerUri.js"></script>
-    <script src="/js/constants/pinMarkerUri.js"></script>
-    <script src="/js/filters/capitalize.js"></script>
-    <script src="/js/filters/time.js"></script>
-    <script src="/js/filters/radius.js"></script>
-    <script src="/js/filters/isVisible.js"></script>
-    <script src="/js/services/time.js"></script>
-    <script src="/js/services/counts.js"></script>
-    <script src="/js/services/spinner.js"></script>
-    <script src="/js/services/map.js"></script>
-    <script src="/js/services/mapRoute.js"></script>
-    <script src="/js/services/mapMarker.js"></script>
-    <script src="/js/services/mapCenter.js"></script>
-    <script src="/js/services/geoapi.js"></script>
-    <script src="/js/services/feedme.js"></script>
+    <script src="/app/app.js"></script>
+    <script src="/app/views/home/controller.js"></script>
+    <script src="/app/views/home/logo/directive.js"></script>
+    <script src="/app/views/home/controlMenu/directive.js"></script>
+    <script src="/app/views/home/eventsDisplay/directive.js"></script>
+    <script src="/app/shared/mapConstants.js"></script>
+    <script src="/app/shared/filters/capitalize.js"></script>
+    <script src="/app/shared/filters/time.js"></script>
+    <script src="/app/shared/filters/radius.js"></script>
+    <script src="/app/shared/filters/isVisible.js"></script>
+    <script src="/app/shared/services/time.js"></script>
+    <script src="/app/shared/services/counts.js"></script>
+    <script src="/app/shared/services/spinner.js"></script>
+    <script src="/app/shared/services/map.js"></script>
+    <script src="/app/shared/services/mapRoute.js"></script>
+    <script src="/app/shared/services/mapMarker.js"></script>
+    <script src="/app/shared/services/mapCenter.js"></script>
+    <script src="/app/shared/services/geoapi.js"></script>
+    <script src="/app/shared/services/feedme.js"></script>
   </head>
-  <body ng-app='myApp'>
+  <body ng-app='app'>
 
   <div class="container" ng-view></div>
 
