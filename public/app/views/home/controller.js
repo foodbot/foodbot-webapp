@@ -1,24 +1,27 @@
 angular.module('app.home', [
   'app.home.logo',
-  'app.home.controlMenu',
-  'app.home.eventsDisplay',
+  'app.home.inputMenu',
+  'app.home.eventList',
+  'ngMap',
+  'angularMoment',
+  'angularSpinner',
   'shared.mapConstants',
 ])
 
-.controller('homeController', 
-  function(
-    $scope, 
-    $timeout, 
-    $filter,
-    $location,
-    $window,
-    MapService,
-    MapCenterService,
-    MapRouteService,
-    SpinnerService,
-    CountService,
-    TimeService,
-    FeedmeService){
+.controller('homeController', function(
+  $scope, 
+  $timeout, 
+  $filter,
+  $location,
+  $window,
+  MapService,
+  MapCenterService,
+  MapRouteService,
+  SpinnerService,
+  CountService,
+  TimeService,
+  FeedmeService){
+
   $scope.address    = 'San Francisco';
   $scope.predicate  = 'time';
   $scope.reverse    = false;

@@ -12,7 +12,7 @@ var app = module.exports = express();
  * Configuration
  */
 
-app.set('port', process.env.PORT || 8080);
+app.set('port', process.env.PORT || 8000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
