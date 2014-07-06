@@ -1,13 +1,9 @@
 {
-  "name": "public",
+  "name": "foodbot-server",
   "version": "0.0.0",
-  "homepage": "https://github.com/fcolas6013/feed-me-client",
-  "authors": [
-    "Fabrice Colas <pub@grano-salis.net>"
-  ],
+  "homepage": "git@github.com:foodbot/foodbot-server.git",
   "license": "MIT",
   "private": true,
-  "directory": "vendor",
   "ignore": [
     "**/.*",
     "node_modules",

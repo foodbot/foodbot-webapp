@@ -3,7 +3,7 @@ var concat = require('gulp-concat');
 var clean = require('gulp-rimraf');
 var rename = require('gulp-rename');
 var es = require('event-stream');
-var merge = es.concat;
+var merge = require('event-stream').concat;
 
 // var source = require('vinyl-source-stream');
 var stylus = require('gulp-stylus');
@@ -39,11 +39,12 @@ var concatCSS = function(){
     .pipe(gulp.dest('./public/'));
 };
 var copyStuff = function() {
-  return gulp.src(['./src/**/*', '!./src/**/*.js', '!./src/**/*.styl'])
-    .pipe(onlyDirs())
+  return gulp.src(['./src/**/*', '!./src/**/*.js', '!./src/**/*.styl', '!./src/lib/**/*'])
+    .pipe(filterEmptyDirs())
     .pipe(gulp.dest('public/'));
 };
-var onlyDirs = function() {
+//removes empty dirs from stream
+var filterEmptyDirs = function() {
   return es.map(function(file, cb) {
       if (file.stat.isFile()) {
         return cb(null, file);
@@ -57,12 +58,29 @@ gulp.task('clean', function(){
    return gulp.src('./public/',{read: false})
     .pipe(clean());
 });
+
 gulp.task('default', ['clean'], function(){
+
+  gulp.watch('./src/app/**/*.js', function(){
+    console.log("File change - concatApp()");
+    concatApp();
+  });
+  gulp.watch('./src/lib/**/*.js', function(){
+    console.log("File change - concatLib()");
+    concatLib();
+  });
+  gulp.watch('./src/app/**/*.styl', function(){
+    console.log("File change - concatCSS()");
+    concatLib();
+  });
+  gulp.watch(['./src/**/*', '!./src/**/*.js', '!./src/**/*.styl', '!./src/lib/**/*'], function(){
+    console.log("File change - copyStuff()");
+    copyStuff();
+  });
+
   return merge(copyStuff(), concatLib(), concatApp(), concatCSS());
-  // gulp.watch('./src/js/*.js', function(){
-  //   gulp.run('browserify');
-  // });
-  // gulp.watch('./src/css/*.styl', function(){
-  //   gulp.run('stylus');
-  // });
+});
+
+gulp.task('build', ['clean'], function(){
+  return merge(copyStuff(), concatLib(), concatApp(), concatCSS());
 });

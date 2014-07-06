@@ -8,19 +8,7 @@ angular.module('app.home', [
   'shared.mapConstants',
 ])
 
-.controller('homeController', function(
-  $scope, 
-  $timeout, 
-  $filter,
-  $location,
-  $window,
-  MapService,
-  MapCenterService,
-  MapRouteService,
-  SpinnerService,
-  CountService,
-  TimeService,
-  FeedmeService){
+.controller('homeController', function($scope, $timeout, $filter, $location, $window, MapManager, MapCenterManager, MapRouteManager, SpinnerManager, CountManager, TimeManager, FeedmeManager){
 
   $scope.address    = 'San Francisco';
   $scope.predicate  = 'time';
@@ -31,43 +19,43 @@ angular.module('app.home', [
   $scope.tableHeight= .7*$window.innerHeight;
   $scope.hasEvents  = false;
   $scope.showRoute  = function(event){
-    MapRouteService.get(MapCenterService.get(), event.marker.getPosition());
+    MapRouteManager.get(MapCenterManager.get(), event.marker.getPosition());
   };
 
   // DELAY ON SEARCH BOX 
   var tempAddress   = '';
   $scope.filterAddressTimeout;
-  $scope.getCount   = CountService.get;
+  $scope.getCount   = CountManager.get;
 
   $scope.update               = function(){
-    SpinnerService.start();
-    // FeedmeService.get($scope.filterAddress).then(function(res){ 
-    FeedmeService.get($scope.filterAddressTimeout).then(function(res){ 
+    SpinnerManager.start();
+    // FeedmeManager.get($scope.filterAddress).then(function(res){ 
+    FeedmeManager.get($scope.filterAddressTimeout).then(function(res){ 
       $scope.events           = res.data.results; 
       for(var i = 0 ; i < $scope.events.length ; i++){
         $scope.events[i].showDescription= false ;
         $scope.events[i].showTags       = false ;
         $scope.events[i].marker         = null  ;
-        $scope.events[i].timeFMT        = TimeService.format($scope.events[i]);
+        $scope.events[i].timeFMT        = TimeManager.format($scope.events[i]);
         if($scope.events[i].description.length > 283){
           $scope.events[i].text = $scope.events[i].description.slice(0,283)+' ...';
         } else {
           $scope.events[i].text = $scope.events[i].description;
         }
       }
-      CountService.update($scope.events);   
-      return MapService.update($scope.events);
+      CountManager.update($scope.events);   
+      return MapManager.update($scope.events);
     }).then(function(){
-      SpinnerService.stop();
+      SpinnerManager.stop();
     });
   };
 
-  SpinnerService.start();
-  MapService.init($scope).then(function(position){
+  SpinnerManager.start();
+  MapManager.init($scope).then(function(position){
     $scope.update();
     $scope.$watch('radius', function(val){
-      MapCenterService.setRadius(val);
-      MapService.setRadius();
+      MapCenterManager.setRadius(val);
+      MapManager.setRadius();
       $scope.update();
     });
     $scope.$watch('timeframe', function(val){
@@ -78,7 +66,7 @@ angular.module('app.home', [
       tempAddress = val;
       filterAddressTimeout      = $timeout(function() {
         $scope.filterAddressTimeout = tempAddress;
-        MapService.set($scope.filterAddressTimeout).then(function(){
+        MapManager.set($scope.filterAddressTimeout).then(function(){
           $scope.update();
         });
       }, 800);
