@@ -7,3 +7,7 @@ azure.err
 run.sh
 Food.sublime-project
 Food.sublime-workspace
+
+/public
+/node_modules
+/src/lib

@@ -6,11 +6,20 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "3.5.1",
-    "ejs": "~1.0.0",
-    "request": "~2.34.0",
-    "underscore": "~1.6.0",
     "bluebird": "~1.2.1",
-    "promised-mongo": "^0.9.8"
+    "ejs": "~1.0.0",
+    "event-stream": "^3.1.5",
+    "express": "3.5.1",
+    "gulp": "^3.8.5",
+    "gulp-concat": "^2.2.0",
+    "gulp-ngmin": "^0.3.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-rimraf": "^0.1.0",
+    "gulp-stylus": "^1.0.2",
+    "gulp-uglify": "^0.3.1",
+    "nib": "^1.0.3",
+    "promised-mongo": "^0.9.8",
+    "request": "~2.34.0",
+    "underscore": "~1.6.0"
   }
 }
