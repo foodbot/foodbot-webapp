@@ -1,4 +1,4 @@
-app.service('TimeManager', function(){
+app.service('timeManager', function(){
   var weekdays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   moment.lang('en', weekdays);  
   return {

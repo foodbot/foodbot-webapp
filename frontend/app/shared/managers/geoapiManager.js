@@ -1,6 +1,5 @@
 //http://proccli.com/2013/10/angularjs-geolocation-service
-app.service('GeoapiManager', 
-  function($http, $q, $window, $rootScope){
+app.service('geoapiManager', function($http, $q, $window, $rootScope){
   var position0 = {'latitude': 37.7,'longitude':-122.4}; // San Francisco
   var position = position0;
   var uri = 'https://maps.googleapis.com/maps/api/geocode/json?sensor=false&' ;

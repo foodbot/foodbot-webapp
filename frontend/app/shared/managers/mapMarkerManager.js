@@ -1,4 +1,4 @@
-app.service('MapMarkerManager', function(MapRouteManager, MapCenterManager, highlightMarkerUri){
+app.service('mapMarkerManager', function(mapRouteManager, mapCenterManager, highlightMarkerUri){
 
   var storage = [];
 
@@ -41,19 +41,19 @@ app.service('MapMarkerManager', function(MapRouteManager, MapCenterManager, high
     // http://stackoverflow.com/questions/7044587/adding-multiple-markers-with-infowindows-google-maps-api
     google.maps.event.addListener(marker, 'click', function(
           event, 
-          MapMarkerManager, 
-          MapCenterManager, 
-          MapRouteManager) {
+          mapMarkerManager, 
+          mapCenterManager, 
+          mapRouteManager) {
       return function() {
-        MapMarkerManager.closeWindow();
-        MapMarkerManager.onClick(event.marker);
-        MapRouteManager.get(MapCenterManager.get(), event.marker.getPosition());
-        MapCenterManager.set(event.marker.getPosition());
+        mapMarkerManager.closeWindow();
+        mapMarkerManager.onClick(event.marker);
+        mapRouteManager.get(mapCenterManager.get(), event.marker.getPosition());
+        mapCenterManager.set(event.marker.getPosition());
       }
     }(event, 
       this, 
-      MapCenterManager, 
-      MapRouteManager));
+      mapCenterManager, 
+      mapRouteManager));
     event.highlightMarker = function(){ this.marker.setIcon(highlightMarkerUri); };
     event.normalizeMarker = function(){ this.marker.setIcon(null); };
     return event;

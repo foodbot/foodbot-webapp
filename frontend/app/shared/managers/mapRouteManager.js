@@ -1,4 +1,4 @@
-app.service('MapRouteManager', function($rootScope, MapCenterManager){
+app.service('mapRouteManager', function($rootScope, mapCenterManager){
 
   var dest = null;
 
@@ -18,9 +18,9 @@ app.service('MapRouteManager', function($rootScope, MapCenterManager){
   this.init = function(map){
     this.directionsDisplay.setMap(map); 
     google.maps.event.addListener(this.directionsDisplay, 'directions_changed', 
-      function(MapCenterManager, MapRouteManager){
-        return function() { MapCenterManager.set(MapRouteManager.getDestination()); };
-      }(MapCenterManager, this)
+      function(mapCenterManager, mapRouteManager){
+        return function() { mapCenterManager.set(mapRouteManager.getDestination()); };
+      }(mapCenterManager, this)
     );
 
   };
@@ -32,17 +32,17 @@ app.service('MapRouteManager', function($rootScope, MapCenterManager){
       'destination' : this.getDestination(),
       'travelMode'  : google.maps.TravelMode.WALKING 
     };
-    this.directionsService.route(request, function(MapRouteManager){
+    this.directionsService.route(request, function(mapRouteManager){
       return function(response, status) {
         if (status == google.maps.DirectionsStatus.OK) {
-          MapRouteManager.directionsDisplay.setDirections(response);
+          mapRouteManager.directionsDisplay.setDirections(response);
         }
       }
     }(this));
-    $rootScope.$on('dragend:home', function(MapRouteManager){
+    $rootScope.$on('dragend:home', function(mapRouteManager){
       return function(event){ 
         debugger;
-        MapRouteManager.directionsDisplay.setMap(null);
+        mapRouteManager.directionsDisplay.setMap(null);
       }
     }(this));
 

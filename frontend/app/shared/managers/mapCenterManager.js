@@ -1,4 +1,4 @@
-app.service('MapCenterManager',function($rootScope, pinMarkerUri){
+app.service('mapCenterManager',function($rootScope, pinMarkerUri){
   var radius = 5 ; // in miles
   this.center = null;
   this.home = null;

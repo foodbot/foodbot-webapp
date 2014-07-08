@@ -1,4 +1,4 @@
-app.service('CountManager', function(TimeManager){
+app.service('countManager', function(timeManager){
 
   var N = {
     'today'   :{'LT1':0,'LT3':0,'LT5':0},
@@ -15,8 +15,8 @@ app.service('CountManager', function(TimeManager){
   };
 
   this.update = function(x){
-    var tonight = TimeService.tonight();
-    var tomorrow= TimeService.tomorrow();
+    var tonight = timeManager.tonight();
+    var tomorrow= timeManager.tomorrow();
     init();
     for(var i = 0 ; i < x.length ; i++){
       var t = new Date(x[i].time);

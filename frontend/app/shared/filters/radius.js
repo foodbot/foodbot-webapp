@@ -1,6 +1,6 @@
-app.filter('radius', ['MapCenterService',function(MapCenterService){
+app.filter('radius', function(mapCenterManager){
   mapDistance = function(event){
-    var pos   = MapCenterService.get()
+    var pos   = mapCenterManager.get()
     var lat1  = (Math.PI / 180) * pos.lat()   ;
     var lat2  = (Math.PI / 180) * event.venue.address.latitude ;
     var lon1  = (Math.PI / 180) * pos.lng() ; 
@@ -14,7 +14,7 @@ app.filter('radius', ['MapCenterService',function(MapCenterService){
 
   return function(event){
     var result = mapDistance(event);
-    var radius = MapCenterService.getRadius();
+    var radius = mapCenterManager.getRadius();
     return  result < radius ; 
   };
-}]);
+});

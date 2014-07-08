@@ -2,8 +2,12 @@
   "name": "foodbot-server",
   "version": "0.0.0",
   "homepage": "git@github.com:foodbot/foodbot-server.git",
+  "authors": [
+    "Rob Graeber <bgraeber@gmail.com>"
+  ],
   "license": "MIT",
   "private": true,
+  "directory": "vendor",
   "ignore": [
     "**/.*",
     "node_modules",

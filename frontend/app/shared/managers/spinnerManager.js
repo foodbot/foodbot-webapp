@@ -1,15 +1,15 @@
-app.service('SpinnerManager', function(usSpinnerService){
+app.service('spinnerManager', function(usSpinnerService){
   var isSpinning = true;
   return {
     'get'   : function(){ return isSpinning; }, 
     'start' : function(){ 
       if(!isSpinning){
-        usSpinnerManager.spin('spinner-1');  
+        usSpinnerService.spin('spinner-1');  
         isSpinning = true;
       } 
     },
     'stop'  : function(){
-      usSpinnerManager.stop('spinner-1');  
+      usSpinnerService.stop('spinner-1');  
       isSpinning = false;
     }
   };
