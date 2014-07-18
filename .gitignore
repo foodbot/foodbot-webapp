@@ -8,6 +8,6 @@ run.sh
 Food.sublime-project
 Food.sublime-workspace
 
-/backend/public
+/public
 /frontend/lib
 /node_modules
