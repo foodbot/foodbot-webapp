@@ -10,8 +10,8 @@ var _ = require('underscore');
 /************************************************************************
  * Other dependencies
  ***********************************************************************/
-var foodPhrases = require('../foodPhrases');
-var excludedPhrases = require('../excludedPhrases');
+var foodPhrases = require('../shared/foodPhrases');
+var excludedPhrases = require('../shared/excludedPhrases');
 
 /************************************************************************
  * Database access

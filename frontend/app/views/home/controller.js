@@ -1,7 +1,7 @@
 angular.module('app.home', [
   'app.home.logo',
-  'app.home.inputMenu',
-  'app.home.eventList',
+  'app.home.searchBar',
+  'app.home.searchResults',
   'ngMap',
   'angularMoment',
   'angularSpinner',

@@ -7,10 +7,10 @@ var nib = require('nib');
 var es = require('event-stream');
 var merge = require('event-stream').concat;
 
-var publicDir = './backend/public';
+var publicDir = './public';
+var publicAssetsDir = './public/assets';
 
-
-var concatLib = function() {
+var concatLibJS = function() {
   return gulp.src([
       './frontend/lib/jquery/dist/jquery.js',
       './frontend/lib/bootstrap/dist/js/bootstrap.js',
@@ -25,18 +25,18 @@ var concatLib = function() {
       './frontend/lib/angular-spinner/angular-spinner.js',
     ])
     .pipe(concat('lib.js'))
-    .pipe(gulp.dest(publicDir));
+    .pipe(gulp.dest(publicAssetsDir));
 };
-var concatApp = function() {
+var concatAppJS = function() {
   return gulp.src('./frontend/app/**/*.js')
     .pipe(concat('app.js'))
-    .pipe(gulp.dest(publicDir));
+    .pipe(gulp.dest(publicAssetsDir));
 };
 var concatCSS = function(){
   return gulp.src('./frontend/app/**/*.styl')
     .pipe(stylus({use: [nib()]}))
     .pipe(concat('app.css'))
-    .pipe(gulp.dest(publicDir));
+    .pipe(gulp.dest(publicAssetsDir));
 };
 var copyStuff = function() {
   return gulp.src(['./frontend/**/*', '!./frontend/**/*.js', '!./frontend/**/*.styl', '!./frontend/lib/**/*'])
@@ -62,25 +62,25 @@ gulp.task('clean', function(){
 gulp.task('default', ['clean'], function(){
 
   gulp.watch('./frontend/app/**/*.js', function(){
-    console.log("File change - concatApp()");
-    concatApp();
+    console.log("File change - concatAppJS()");
+    concatAppJS();
   });
   gulp.watch('./frontend/lib/**/*.js', function(){
-    console.log("File change - concatLib()");
-    concatLib();
+    console.log("File change - concatLibJS()");
+    concatLibJS();
   });
   gulp.watch('./frontend/app/**/*.styl', function(){
     console.log("File change - concatCSS()");
-    concatLib();
+    concatLibJS();
   });
   gulp.watch(['./frontend/**/*', '!./frontend/**/*.js', '!./frontend/**/*.styl', '!./frontend/lib/**/*'], function(){
     console.log("File change - copyStuff()");
     copyStuff();
   });
 
-  return merge(copyStuff(), concatLib(), concatApp(), concatCSS());
+  return merge(copyStuff(), concatLibJS(), concatAppJS(), concatCSS());
 });
 
 gulp.task('build', ['clean'], function(){
-  return merge(copyStuff(), concatLib(), concatApp(), concatCSS());
+  return merge(copyStuff(), concatLibJS(), concatAppJS(), concatCSS());
 });
