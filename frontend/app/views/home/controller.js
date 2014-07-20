@@ -14,8 +14,8 @@ angular.module('app.home', [
   $scope.predicate  = 'time';
   $scope.reverse    = false;
   $scope.timeframe  = 'today';
-  $scope.isVisible  = function(event){return $filter('isVisible')(event, $scope)};
   $scope.radius     = 5;
+  $scope.isVisible  = function(event){return $filter('isVisible')(event, $scope)};
   $scope.tableHeight= .7*$window.innerHeight;
   $scope.hasEvents  = false;
   $scope.showRoute  = function(event){
@@ -24,13 +24,12 @@ angular.module('app.home', [
 
   // DELAY ON SEARCH BOX 
   var tempAddress   = '';
-  $scope.filterAddressTimeout;
-  $scope.getCount   = countManager.get;
+  var filterAddressTimeout;
 
-  $scope.update               = function(){
+  $scope.update = function(){
     spinnerManager.start();
     // FeedmeManager.get($scope.filterAddress).then(function(res){ 
-    FeedmeManager.get($scope.filterAddressTimeout).then(function(res){ 
+    FeedmeManager.get(filterAddressTimeout).then(function(res){ 
       $scope.events           = res.data.results; 
       for(var i = 0 ; i < $scope.events.length ; i++){
         $scope.events[i].showDescription= false ;
@@ -62,11 +61,11 @@ angular.module('app.home', [
       $scope.update();
     });
     $scope.$watch('address', function(val){
-      if($scope.filterAddressTimeout) $timeout.cancel($scope.filterAddressTimeout);
+      if(filterAddressTimeout) $timeout.cancel(filterAddressTimeout);
       tempAddress = val;
-      filterAddressTimeout      = $timeout(function() {
-        $scope.filterAddressTimeout = tempAddress;
-        mapManager.set($scope.filterAddressTimeout).then(function(){
+      filterAddressTimeout = $timeout(function() {
+        filterAddressTimeout = tempAddress;
+        mapManager.set(filterAddressTimeout).then(function(){
           $scope.update();
         });
       }, 800);

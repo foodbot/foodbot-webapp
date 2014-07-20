@@ -2,7 +2,7 @@ angular.module('app.home.logo', [])
 
 .directive("logo", function(){
   var template =
-                '<div class="hme_logo">'+
+                '<div class="hme-logo">'+
                   '<img class="logo" src="/app/views/home/logo/foodbot.png"/>'+
                 '</div>';
   return {

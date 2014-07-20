@@ -1,34 +1,39 @@
 app.service('countManager', function(timeManager){
 
-  var N = {
-    'today'   :{'LT1':0,'LT3':0,'LT5':0},
-    'tomorrow':{'LT1':0,'LT3':0,'LT5':0},
-    'thisweek':{'LT1':0,'LT3':0,'LT5':0}
+  var events = {
+    'today'   :{1:0, 3:0, 5:0},
+    'tomorrow':{1:0, 3:0, 5:0},
+    'thisweek':{1:0, 3:0, 5:0}
   };
 
   init = function(){
-    for(var i in N) for(var j in N[i]) N[i][j] = 0;
+    for(var i in events) {
+      for(var j in events[i]){
+        events[i][j] = 0;
+      }
+    }
   };
 
-  this.get =function(time, distance){
-    return N[time][distance];
+  this.get = function(timeframe, radius){
+    radius = radius || 5;
+    return events[timeframe][radius];
   };
 
-  this.update = function(x){
+  this.update = function(items){
     var tonight = timeManager.tonight();
-    var tomorrow= timeManager.tomorrow();
+    var tomorrow = timeManager.tomorrow();
     init();
-    for(var i = 0 ; i < x.length ; i++){
-      var t = new Date(x[i].time);
-      if(t <  tonight  &&                  x[i].distance < 1) N.today.LT1++;
-      if(t <  tonight  &&                  x[i].distance < 3) N.today.LT3++;
-      if(t <  tonight  &&                  x[i].distance < 5) N.today.LT5++;
-      if(t >= tonight  && t <  tomorrow && x[i].distance < 1) N.tomorrow.LT1++;
-      if(t >= tonight  && t <  tomorrow && x[i].distance < 3) N.tomorrow.LT3++;
-      if(t >= tonight  && t <  tomorrow && x[i].distance < 5) N.tomorrow.LT5++;
-      if(                 t >= tomorrow && x[i].distance < 1) N.thisweek.LT1++;
-      if(                 t >= tomorrow && x[i].distance < 3) N.thisweek.LT3++;
-      if(                 t >= tomorrow && x[i].distance < 5) N.thisweek.LT5++;
+    for(var i = 0 ; i < items.length ; i++){
+      var t = new Date(items[i].time);
+      if(t <  tonight  &&                  items[i].distance < 1) events["today"][1]++;
+      if(t <  tonight  &&                  items[i].distance < 3) events["today"][3]++;
+      if(t <  tonight  &&                  items[i].distance < 5) events["today"][5]++;
+      if(t >= tonight  && t <  tomorrow && items[i].distance < 1) events["tomorrow"][1]++;
+      if(t >= tonight  && t <  tomorrow && items[i].distance < 3) events["tomorrow"][3]++;
+      if(t >= tonight  && t <  tomorrow && items[i].distance < 5) events["tomorrow"][5]++;
+      if(                 t >= tomorrow && items[i].distance < 1) events["thisweek"][1]++;
+      if(                 t >= tomorrow && items[i].distance < 3) events["thisweek"][3]++;
+      if(                 t >= tomorrow && items[i].distance < 5) events["thisweek"][5]++;
     }
   };
 });
