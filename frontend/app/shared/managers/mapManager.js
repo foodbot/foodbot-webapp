@@ -1,10 +1,12 @@
 app.service('mapManager', function($rootScope, $filter, geoapiManager, mapCenterManager, mapRouteManager, mapMarkerManager, highlightMarkerUri, normalMarkerUri, pinMarkerUri, mapOptions){
-  var radius, center ; 
+  var radius;
+  var center;
+
   this.element        = document.getElementById('map');
 
   this.init           = function(scope){
     this.scope        = scope;
-    this.mapWrapper = scope.mapWrapper = new google.maps.Map(map, mapOptions.default);
+    this.mapWrapper   = scope.mapWrapper = new google.maps.Map(map, mapOptions.default); //map defined globally
     this.address      = scope.address;
 
     mapRouteManager.init(this.mapWrapper);
