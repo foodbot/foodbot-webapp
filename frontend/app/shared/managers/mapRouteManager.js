@@ -13,7 +13,7 @@ app.service('mapRouteManager', function($rootScope, mapCenterManager){
 
   this.getDestination = function(){ return dest; };
   
-  this.setDestination = function(position){ dest = position }; 
+  this.setDestination = function(position){ dest = position; }; 
 
   this.init = function(map){
     this.directionsDisplay.setMap(map); 
@@ -37,14 +37,14 @@ app.service('mapRouteManager', function($rootScope, mapCenterManager){
         if (status == google.maps.DirectionsStatus.OK) {
           mapRouteManager.directionsDisplay.setDirections(response);
         }
-      }
+      };
     }(this));
     $rootScope.$on('dragend:home', function(mapRouteManager){
       return function(event){ 
         debugger;
         mapRouteManager.directionsDisplay.setMap(null);
-      }
+      };
     }(this));
 
-  }
+  };
 });

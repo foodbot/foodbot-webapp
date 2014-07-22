@@ -1,4 +1,4 @@
-app.service('FeedmeManager', function($http){
+app.service('feedmeManager', function($http){
   return {
     get: function(address){
       var time = new Date();

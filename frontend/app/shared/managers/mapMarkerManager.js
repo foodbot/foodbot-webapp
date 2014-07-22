@@ -49,7 +49,7 @@ app.service('mapMarkerManager', function(mapRouteManager, mapCenterManager, high
         mapMarkerManager.onClick(event.marker);
         mapRouteManager.get(mapCenterManager.get(), event.marker.getPosition());
         mapCenterManager.set(event.marker.getPosition());
-      }
+      };
     }(event, 
       this, 
       mapCenterManager, 

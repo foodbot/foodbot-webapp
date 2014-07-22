@@ -8,7 +8,7 @@ app.service('timeManager', function(){
     'tonight':  function(){
      var tonight = new Date(); 
      tonight.setHours(23,59,59,999); 
-     return tonight
+     return tonight;
     },
     'tomorrow':function(){
       var tonight = new Date(); 
@@ -20,5 +20,5 @@ app.service('timeManager', function(){
       tomorrow.setHours(23,59,59,999);
       return tomorrow;
     } 
-  }
+  };
 });
