@@ -15,6 +15,7 @@ angular.module('app.home.searchBar', [])
       $scope.getCount = countManager.get;
 
       var updateAddress = function(address){
+        mapManager.set(address);
         feedmeManager.get(address).then(function(res){ 
           $scope.events = res.data.results; 
           for(var i = 0 ; i < $scope.events.length ; i++){
@@ -45,7 +46,6 @@ angular.module('app.home.searchBar', [])
         $scope.$watch('address', function(val){
           if(filterAddressTimeout) $timeout.cancel(filterAddressTimeout);
           filterAddressTimeout = $timeout(function() {
-            mapManager.set($scope.address);
             updateAddress($scope.address);
           }, 800);
         });

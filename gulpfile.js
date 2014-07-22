@@ -71,7 +71,7 @@ gulp.task('default', ['clean'], function(){
   });
   gulp.watch('./frontend/app/**/*.styl', function(){
     console.log("File change - concatCSS()");
-    concatLibJS();
+    concatCSS();
   });
   gulp.watch(['./frontend/**/*', '!./frontend/**/*.js', '!./frontend/**/*.styl', '!./frontend/lib/**/*'], function(){
     console.log("File change - copyStuff()");

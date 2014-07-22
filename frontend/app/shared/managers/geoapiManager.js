@@ -1,20 +1,11 @@
 //http://proccli.com/2013/10/angularjs-geolocation-service
 app.service('geoapiManager', function($http, $q, $window, $rootScope){
-  var position0 = {'latitude': 37.7,'longitude':-122.4}; // San Francisco
-  var position = position0;
+  var initialPosition = {'latitude': 37.7833,'longitude':-122.4167}; // San Francisco
   var uri = 'https://maps.googleapis.com/maps/api/geocode/json?sensor=false&' ;
 
   this.init = function(){
     var deferred = $q.defer();
-    if (!$window.navigator) {
-        $rootScope.$apply(function(){ deferred.resolve(position0)})
-    } else {
-      $window.navigator.geolocation.getCurrentPosition(function(position){
-        $rootScope.$apply(function(){ deferred.resolve(position.coords)})
-      }, function (error) {
-        $rootScope.$apply(function(){ deferred.reject(position0)})
-      });
-    }
+    deferred.resolve(initialPosition);
     return deferred.promise;
   };
 
@@ -22,8 +13,8 @@ app.service('geoapiManager', function($http, $q, $window, $rootScope){
     return $http.get(uri+'address='+ addr); 
   };
 
-  this.getAddress = function(coord){ 
-    return $http.get(uri+'latlng=' +coord.latitude+','+coord.longitude); 
+  this.getAddress = function(lat, lng){ 
+    return $http.get(uri+'latlng='+lat+','+lng); 
   };
 
 });

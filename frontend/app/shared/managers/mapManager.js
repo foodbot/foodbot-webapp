@@ -2,7 +2,28 @@ app.service('mapManager', function($rootScope, $filter, geoapiManager, mapCenter
   var radius, center ; 
   this.element        = document.getElementById('map');
 
-  this.get            = function(){ return this.mapWrapper; };
+  this.init           = function(scope){
+    this.scope        = scope;
+    this.mapWrapper = scope.mapWrapper = new google.maps.Map(map, mapOptions.default);
+    this.address      = scope.address;
+
+    mapRouteManager.init(this.mapWrapper);
+
+    $rootScope.$on('dragend:home', function(mapManager){
+      return function(event){ mapManager.setRadius();};
+    }(this));
+    // ON WINDOW RESIZE, AUTO RE-CENTER THE MAP
+    google.maps.event.addDomListener(window, 'resize', function(event) {
+      mapCenterManager.refresh(); 
+    });
+    return geoapiManager.init().then(function(position){
+      mapCenterManager.init(position, scope, scope.mapWrapper);
+      mapCenterManager.setCoord(position.latitude, position.longitude);
+    });
+  };
+
+  this.getMap         = function(){ return this.mapWrapper; };
+
 
   this.getCenter      = function(){ return mapCenterManager.get();};
 
@@ -11,13 +32,13 @@ app.service('mapManager', function($rootScope, $filter, geoapiManager, mapCenter
       return function(addr){
         var loc = addr.data.results[0].geometry.location;
         var pos = {latitude:loc.lat, longitude:loc.lng};
-        mapCenterManager.init(pos, mapManager.scope, mapManager.get());
+        mapCenterManager.init(pos, mapManager.scope, mapManager.getMap());
         mapManager.setRadius();
-      }
+      };
     }(this));
   };
 
-  this.getRadius      = function(){ return radius };
+  this.getRadius      = function(){ return radius; };
 
   this.setRadius      = function(){
     radius && radius.setMap(null);
@@ -27,7 +48,7 @@ app.service('mapManager', function($rootScope, $filter, geoapiManager, mapCenter
       'strokeWeight'  : 4,
       'fillColor'     : '#b2182b',
       'fillOpacity'   : 0.0,
-      'map'           : this.mapWrapper,
+      'map'           : this.getMap(),
       'center'        : mapCenterManager.get(),
       'radius'        : mapCenterManager.getRadius() * 1.624 * 1000  
     });
@@ -38,30 +59,10 @@ app.service('mapManager', function($rootScope, $filter, geoapiManager, mapCenter
     mapMarkerManager.flush();
     for (var i = 0; i < events.length ; i++) {
       if($filter('isVisible')(events[i], this.scope)){
-        mapMarkerManager.mixin(events[i], this.get());
+        mapMarkerManager.mixin(events[i], this.getMap());
       } 
     }
   };
 
-  this.init           = function(scope){
-    this.scope        = scope;
-    this.mapWrapper = scope.mapWrapper = new google.maps.Map(map, mapOptions.default);
-    this.address      = scope.address;
-    $rootScope.$on('dragend:home', function(mapManager){
-      return function(event){ mapManager.setRadius()}
-    }(this));
-    return geoapiManager.init().then(function(position){
-      var point = new google.maps.LatLng(position.latitude, position.longitude);
-      mapCenterManager.init(position, scope, scope.mapWrapper);
-      mapRouteManager.init(scope.mapWrapper);
-      // ON WINDOW RESIZE, AUTO RE-CENTER THE MAP
-      google.maps.event.addDomListener(window, 'resize', function(event) {
-        mapCenterManager.set(mapCenterManager.get()); 
-      });
-      // CHANGE ADDRESS FOR THE FORMATTED ONE GIVEN LAT-LON OF BROWSER 
-      geoapiManager.getAddress(position).then(function(res){
-        scope.address = res.data.results[0].formatted_address;
-      });
-    })
-  };
+  
 });
