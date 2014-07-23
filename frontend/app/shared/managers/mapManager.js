@@ -1,7 +1,6 @@
 app.service('mapManager', function($rootScope, $filter, geoapiManager, mapCenterManager, mapRouteManager, mapMarkerManager, highlightMarkerUri, normalMarkerUri, pinMarkerUri, mapOptions){
   var radius;
   var center;
-
   this.element        = document.getElementById('map');
 
   this.init           = function(scope){
@@ -11,14 +10,15 @@ app.service('mapManager', function($rootScope, $filter, geoapiManager, mapCenter
 
     mapRouteManager.init(this.mapWrapper);
 
-    $rootScope.$on('dragend:home', function(mapManager){
-      return function(event){ mapManager.setRadius();};
-    }(this));
+    $rootScope.$on('dragend:home', function(e){ 
+      this.setRadius();
+    }.bind(this));
     // ON WINDOW RESIZE, AUTO RE-CENTER THE MAP
-    google.maps.event.addDomListener(window, 'resize', function(event) {
+    google.maps.event.addDomListener(window, 'resize', function(e) {
       mapCenterManager.refresh(); 
     });
-    return geoapiManager.init().then(function(position){
+    return geoapiManager.init()
+    .then(function(position){
       mapCenterManager.init(position, scope, scope.mapWrapper);
       mapCenterManager.setCoord(position.latitude, position.longitude);
     });
@@ -30,20 +30,19 @@ app.service('mapManager', function($rootScope, $filter, geoapiManager, mapCenter
   this.getCenter      = function(){ return mapCenterManager.get();};
 
   this.set            = function(anAddress){
-    return geoapiManager.getLatLng(anAddress).then(function(mapManager){
-      return function(addr){
-        var loc = addr.data.results[0].geometry.location;
-        var pos = {latitude:loc.lat, longitude:loc.lng};
-        mapCenterManager.init(pos, mapManager.scope, mapManager.getMap());
-        mapManager.setRadius();
-      };
-    }(this));
+    return geoapiManager.getLatLng(anAddress)
+    .then(function(item){
+      var loc = item.data.results[0].geometry.location;
+      var pos = {latitude:loc.lat, longitude:loc.lng};
+      mapCenterManager.init(pos, this.scope, this.getMap());
+      this.setRadius();
+    }.bind(this));
   };
 
   this.getRadius      = function(){ return radius; };
 
   this.setRadius      = function(){
-    radius && radius.setMap(null);
+    if(radius) { radius.setMap(null); }
     radius = new google.maps.Circle({
       'strokeColor'   : '#b2182b',
       'strokeOpacity' : 0.7,
@@ -54,7 +53,6 @@ app.service('mapManager', function($rootScope, $filter, geoapiManager, mapCenter
       'center'        : mapCenterManager.get(),
       'radius'        : mapCenterManager.getRadius() * 1.624 * 1000  
     });
-
   };
 
   this.update           = function(events){

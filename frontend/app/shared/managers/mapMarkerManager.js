@@ -3,7 +3,9 @@ app.service('mapMarkerManager', function(mapRouteManager, mapCenterManager, high
   var storage = [];
 
   this.flush = function(){ 
-    while(storage.length > 0) storage.pop().setMap(null);
+    while(storage.length > 0) {
+      storage.pop().setMap(null); 
+    }
   };
   
   this.length = function(){ 
@@ -11,7 +13,9 @@ app.service('mapMarkerManager', function(mapRouteManager, mapCenterManager, high
   };
 
   this.closeWindow = function(){ 
-    this.lastInfo && this.lastInfo.close(); 
+    if(this.lastInfo){
+      this.lastInfo.close();
+    } 
   };
   
   this.onClick = function(marker){
@@ -19,16 +23,16 @@ app.service('mapMarkerManager', function(mapRouteManager, mapCenterManager, high
     this.lastInfo.open(marker.getMap(), marker);
   };
   
-  this.mixin = function(event, map){ 
-    var venue       = event.venue.address;
-    var marker      = new google.maps.Marker({ 'title': event.title });
+  this.mixin = function(foodEvent, map){ 
+    var venue       = foodEvent.venue.address;
+    var marker      = new google.maps.Marker({ 'title': foodEvent.title });
     var position    = new google.maps.LatLng(venue.latitude, venue.longitude);
     marker.setPosition(position);
     marker.setMap(map);
-    var text        = '<b><a href="'+event.unique+'">'+event.name+'</a></b><br><p><a href="'+event.unique+'">'; 
-    text            += event.description.length>143?event.description.slice(0,143)+' ...':event.description ;
-    text            += '</a><address><strong>@ '+event.venue.name+'</strong> ';
-    text            += '<a href="'+event.unique+'">'+venue.address1+'</a>';
+    var text        = '<b><a href="'+foodEvent.unique+'">'+foodEvent.name+'</a></b><br><p><a href="'+foodEvent.unique+'">'; 
+    text            += foodEvent.description.length>143?foodEvent.description.slice(0,143)+' ...':foodEvent.description ;
+    text            += '</a><address><strong>@ '+foodEvent.venue.name+'</strong> ';
+    text            += '<a href="'+foodEvent.unique+'">'+venue.address1+'</a>';
     text            += ' - ' + venue.city;
     marker.infoText   = text;
     marker.infoWindow = new google.maps.InfoWindow({ 
@@ -37,25 +41,25 @@ app.service('mapMarkerManager', function(mapRouteManager, mapCenterManager, high
       'position':position
     });
     storage.push(marker);
-    event.marker          = marker;
+    foodEvent.marker          = marker;
     // http://stackoverflow.com/questions/7044587/adding-multiple-markers-with-infowindows-google-maps-api
     google.maps.event.addListener(marker, 'click', function(
-          event, 
+          foodEvent, 
           mapMarkerManager, 
           mapCenterManager, 
           mapRouteManager) {
       return function() {
         mapMarkerManager.closeWindow();
-        mapMarkerManager.onClick(event.marker);
-        mapRouteManager.get(mapCenterManager.get(), event.marker.getPosition());
-        mapCenterManager.set(event.marker.getPosition());
+        mapMarkerManager.onClick(foodEvent.marker);
+        mapRouteManager.get(mapCenterManager.get(), foodEvent.marker.getPosition());
+        mapCenterManager.set(foodEvent.marker.getPosition());
       };
-    }(event, 
+    }(foodEvent, 
       this, 
       mapCenterManager, 
       mapRouteManager));
-    event.highlightMarker = function(){ this.marker.setIcon(highlightMarkerUri); };
-    event.normalizeMarker = function(){ this.marker.setIcon(null); };
-    return event;
+    foodEvent.highlightMarker = function(){ this.marker.setIcon(highlightMarkerUri); };
+    foodEvent.normalizeMarker = function(){ this.marker.setIcon(null); };
+    return foodEvent;
   };
 });

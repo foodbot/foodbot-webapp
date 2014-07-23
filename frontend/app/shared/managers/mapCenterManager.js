@@ -19,7 +19,7 @@ app.service('mapCenterManager',function($rootScope, pinMarkerUri){
       this.center.setMap(null);
       google.maps.event.clearListeners(this.center, "dragend");
     }
-    this.scope = scope;
+    // this.scope = scope;
     this.map = map;
     var pinImage = new google.maps.MarkerImage(
       pinMarkerUri,

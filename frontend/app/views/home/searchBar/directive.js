@@ -34,7 +34,6 @@ angular.module('app.home.searchBar', [])
         });
       };
       mapManager.init($scope).then(function(position){
-        updateAddress();
         $scope.$watch('radius', function(val){
           mapCenterManager.setRadius(val);
           mapManager.setRadius();
