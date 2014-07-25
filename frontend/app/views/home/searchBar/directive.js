@@ -9,14 +9,14 @@ angular.module('app.home.searchBar', [])
       radius: "=",
       events: "="
     },
-    controller: function($scope, $timeout, countManager, feedmeManager, mapManager, mapCenterManager, timeManager){
+    controller: function($scope, $timeout, countManager, apiManager, mapManager, mapCenterManager, timeManager){
       var filterAddressTimeout;
       $scope.events = [];
       $scope.getCount = countManager.get;
 
       var updateAddress = function(address){
         mapManager.set(address);
-        feedmeManager.get(address).then(function(res){ 
+        apiManager.get(address).then(function(res){ 
           $scope.events = res.data.results; 
           for(var i = 0 ; i < $scope.events.length ; i++){
             $scope.events[i].showDescription = false ;
@@ -35,8 +35,7 @@ angular.module('app.home.searchBar', [])
       };
       mapManager.init($scope).then(function(position){
         $scope.$watch('radius', function(val){
-          mapCenterManager.setRadius(val);
-          mapManager.setRadius();
+          mapManager.setRadius(val);
           mapManager.update($scope.events);
         });
         $scope.$watch('timeframe', function(val){

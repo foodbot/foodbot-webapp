@@ -1,17 +1,8 @@
 app.service('mapCenterManager',function($rootScope, pinMarkerUri){
-  var radius = 5 ; // in miles
   this.center = null;
   this.home = null;
 
-  this.lat  = function(){ return this.home.getPosition().lat(); };
-
-  this.lng  = function(){ return this.home.getPosition().lng() ; };
-
-  this.get  = function(){ return this.home.getPosition() ; };
-
-  this.getRadius = function(){ return radius ; };
-
-  this.setRadius = function(val){ radius = val; };
+  this.getHomePosition = function(){ return this.home.getPosition(); };
 
   this.init = function(position, scope, map){
     if(this.home){ this.home.setMap(null); }
@@ -58,8 +49,8 @@ app.service('mapCenterManager',function($rootScope, pinMarkerUri){
     var ne            = this.map.getBounds().getNorthEast();
     var sw            = this.map.getBounds().getSouthWest();
     var delta         = Math.abs(ne.lng()-sw.lng());
-    var lat           = 0.5 * (pos.lat()+this.lat());
-    var lng           = 0.5 * (pos.lng()+this.lng());
+    var lat           = 0.5 * (pos.lat()+this.getHomePosition().lat());
+    var lng           = 0.5 * (pos.lng()+this.getHomePosition().lng());
     var offset = new google.maps.LatLng(lat, lng + delta*0.25*(-1));
     this.map.setCenter(offset); 
   };

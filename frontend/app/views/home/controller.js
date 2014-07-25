@@ -9,7 +9,7 @@ angular.module('app.home', [
   'shared.mapConstants',
 ])
 
-.controller('homeController', function($scope, $timeout, $filter, $location, $window, mapManager, mapCenterManager, mapRouteManager, countManager, timeManager, feedmeManager){
+.controller('homeController', function($scope, $timeout, $filter, $location, $window, mapManager, mapCenterManager, mapRouteManager, countManager, timeManager, apiManager){
 
   $scope.address     = 'San Francisco';
   $scope.predicate   = 'time';
@@ -20,7 +20,7 @@ angular.module('app.home', [
   $scope.tableHeight = 0.7*$window.innerHeight;
   $scope.hasEvents   = false;
   $scope.showRoute   = function(event){
-    mapRouteManager.get(mapCenterManager.get(), event.marker.getPosition());
+    mapRouteManager.get(mapCenterManager.getHomePosition(), event.marker.getPosition());
   };
 });
 

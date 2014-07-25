@@ -17,12 +17,9 @@ app.service('mapRouteManager', function($rootScope, mapCenterManager){
 
   this.init = function(map){
     this.directionsDisplay.setMap(map); 
-    google.maps.event.addListener(this.directionsDisplay, 'directions_changed', 
-      function(mapCenterManager, mapRouteManager){
-        return function() { mapCenterManager.set(mapRouteManager.getDestination()); };
-      }(mapCenterManager, this)
-    );
-
+    google.maps.event.addListener(this.directionsDisplay, 'directions_changed', function() {
+      mapCenterManager.set(this.getDestination()); 
+    }.bind(this));
   };
 
   this.get = function(orig, dest){
@@ -32,19 +29,14 @@ app.service('mapRouteManager', function($rootScope, mapCenterManager){
       'destination' : this.getDestination(),
       'travelMode'  : google.maps.TravelMode.WALKING 
     };
-    this.directionsService.route(request, function(mapRouteManager){
-      return function(response, status) {
-        if (status == google.maps.DirectionsStatus.OK) {
-          mapRouteManager.directionsDisplay.setDirections(response);
-        }
-      };
-    }(this));
-    $rootScope.$on('dragend:home', function(mapRouteManager){
-      return function(event){ 
+    this.directionsService.route(request, function(response, status) {
+      if (status == google.maps.DirectionsStatus.OK) {
+        this.directionsDisplay.setDirections(response);
+      }
+    }.bind(this));
+    $rootScope.$on('dragend:home', function(e){ 
         debugger;
-        mapRouteManager.directionsDisplay.setMap(null);
-      };
-    }(this));
-
+        this.directionsDisplay.setMap(null);
+    }.bind(this));
   };
 });

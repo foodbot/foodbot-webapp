@@ -15,7 +15,7 @@ app.service('mapMarkerManager', function(mapRouteManager, mapCenterManager, high
   this.closeWindow = function(){ 
     if(this.lastInfo){
       this.lastInfo.close();
-    } 
+    }
   };
   
   this.onClick = function(marker){
@@ -29,35 +29,30 @@ app.service('mapMarkerManager', function(mapRouteManager, mapCenterManager, high
     var position    = new google.maps.LatLng(venue.latitude, venue.longitude);
     marker.setPosition(position);
     marker.setMap(map);
-    var text        = '<b><a href="'+foodEvent.unique+'">'+foodEvent.name+'</a></b><br><p><a href="'+foodEvent.unique+'">'; 
-    text            += foodEvent.description.length>143?foodEvent.description.slice(0,143)+' ...':foodEvent.description ;
-    text            += '</a><address><strong>@ '+foodEvent.venue.name+'</strong> ';
-    text            += '<a href="'+foodEvent.unique+'">'+venue.address1+'</a>';
-    text            += ' - ' + venue.city;
-    marker.infoText   = text;
+    var description = foodEvent.description;
+    if(description.length>143){
+      foodEvent.description = foodEvent.description.slice(0,143)+'...';
+    }
+    var html = '<b><a href="'+foodEvent.unique+'">'+foodEvent.name+'</a></b>'+
+               '<br>'+
+               '<a href="'+foodEvent.unique+'">'+foodEvent.description+'</a>'+
+               '<b>@ '+foodEvent.venue.name+'</b>'+
+               '<a href="'+foodEvent.unique+'">'+venue.address1+'</a>'+' - ' + venue.city;
+    marker.infoText   = html;
     marker.infoWindow = new google.maps.InfoWindow({ 
-      'content': text, 
+      'content': html, 
       'maxWidth':300,
       'position':position
     });
     storage.push(marker);
-    foodEvent.marker          = marker;
+    foodEvent.marker = marker;
     // http://stackoverflow.com/questions/7044587/adding-multiple-markers-with-infowindows-google-maps-api
-    google.maps.event.addListener(marker, 'click', function(
-          foodEvent, 
-          mapMarkerManager, 
-          mapCenterManager, 
-          mapRouteManager) {
-      return function() {
-        mapMarkerManager.closeWindow();
-        mapMarkerManager.onClick(foodEvent.marker);
-        mapRouteManager.get(mapCenterManager.get(), foodEvent.marker.getPosition());
+    google.maps.event.addListener(marker, 'click', function() {
+        this.closeWindow();
+        this.onClick(foodEvent.marker);
+        mapRouteManager.get(mapCenterManager.getHomePosition(), foodEvent.marker.getPosition());
         mapCenterManager.set(foodEvent.marker.getPosition());
-      };
-    }(foodEvent, 
-      this, 
-      mapCenterManager, 
-      mapRouteManager));
+    }.bind(this));
     foodEvent.highlightMarker = function(){ this.marker.setIcon(highlightMarkerUri); };
     foodEvent.normalizeMarker = function(){ this.marker.setIcon(null); };
     return foodEvent;
