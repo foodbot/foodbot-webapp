@@ -1,16 +1,15 @@
-//http://proccli.com/2013/10/angularjs-geolocation-service
 app.service('geoapiManager', function($http, $q, $window, $rootScope){
-  var initialPosition = {'latitude': 37.7833,'longitude':-122.4167}; // San Francisco
   var uri = 'https://maps.googleapis.com/maps/api/geocode/json?sensor=false&' ;
 
-  this.init = function(){
-    var deferred = $q.defer();
-    deferred.resolve(initialPosition);
-    return deferred.promise;
-  };
-
-  this.getLatLng  = function(addr){ 
-    return $http.get(uri+'address='+ addr); 
+  //gets the latLng position for address 
+  //returns a promise
+  this.getPosition  = function(addr){ 
+    return $http.get(uri+'address='+ addr)
+    .then(function(item){
+      var loc = item.data.results[0].geometry.location;
+      var position = new google.maps.LatLng(loc.lat, loc.lng);
+      return position;
+    });
   };
 
   this.getAddress = function(lat, lng){ 

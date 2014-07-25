@@ -1,4 +1,4 @@
-app.service('mapRouteManager', function($rootScope, mapCenterManager){
+app.service('mapRouteManager', function($rootScope){
 
   var dest = null;
 
@@ -18,7 +18,7 @@ app.service('mapRouteManager', function($rootScope, mapCenterManager){
   this.init = function(map){
     this.directionsDisplay.setMap(map); 
     google.maps.event.addListener(this.directionsDisplay, 'directions_changed', function() {
-      mapCenterManager.setCenterPosition(this.getDestination()); 
+      // mapCenterManager.setCenterPosition(this.getDestination()); 
     }.bind(this));
   };
 

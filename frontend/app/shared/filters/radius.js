@@ -1,6 +1,6 @@
-app.filter('radius', function(mapCenterManager, mapManager){
+app.filter('radius', function(mapManager){
   mapDistance = function(event){
-    var pos   = mapCenterManager.getHomePosition();
+    var pos   = mapManager.getHomePosition();
     var lat1  = (Math.PI / 180) * pos.lat()   ;
     var lat2  = (Math.PI / 180) * event.venue.address.latitude ;
     var lon1  = (Math.PI / 180) * pos.lng() ; 

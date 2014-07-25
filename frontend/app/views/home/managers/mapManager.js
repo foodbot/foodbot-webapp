@@ -1,56 +1,104 @@
-app.service('mapManager', function($rootScope, $filter, geoapiManager, mapCenterManager, mapRouteManager, mapMarkerManager, highlightMarkerUri, normalMarkerUri, pinMarkerUri, mapOptions){
+//all positions === new google.maps.LatLng(lat, lng); 
+
+app.service('mapManager', function($rootScope, $filter, geoapiManager, mapRouteManager, mapMarkerManager, highlightMarkerUri, normalMarkerUri, pinMarkerUri, mapOptions){
   var radius = 5;
-  var mapRadius;
-  var center;
-  this.element        = document.getElementById('map');
+  var radiusCircle;
+  var centerPosition;
+  this.home = null;
 
   this.init           = function(scope){
     this.scope        = scope;
-    this.mapWrapper   = scope.mapWrapper = new google.maps.Map(map, mapOptions.default); //map defined globally
+    this.map          = scope.map = new google.maps.Map(map, mapOptions.default); //map defined globally
     this.address      = scope.address;
 
-    mapRouteManager.init(this.mapWrapper);
+    mapRouteManager.init(this.map);
 
     $rootScope.$on('dragend:home', function(e){ 
-      this.setRadius();
+      this.redrawRadiusCircle();
     }.bind(this));
+
     // ON WINDOW RESIZE, AUTO RE-CENTER THE MAP
     google.maps.event.addDomListener(window, 'resize', function(e) {
-      mapCenterManager.redrawCenter(); 
+      this.redrawCenter(); 
     });
-    return geoapiManager.init()
-    .then(function(position){
-      mapCenterManager.init(position, scope.mapWrapper);
-      mapCenterManager.setCenterPosition(position);
-    });
+
+    google.maps.event.addListener(map, 'zoom_changed', function(e){
+      this.redrawCenter(); 
+    }.bind(this));
+
+    var position = new google.maps.LatLng(37.7833,-122.4167); //Default location == sf
+    this.setHomePosition(position);
   };
 
-  this.getMap         = function(){ return this.mapWrapper; };
+  this.getMap         = function(){ return this.map; };
 
-  this.getCenter      = function(){ return mapCenterManager.getHomePosition(); };
-
-  this.set            = function(anAddress){
-    return geoapiManager.getLatLng(anAddress)
-    .then(function(item){
-      var loc = item.data.results[0].geometry.location;
-      var pos = {latitude:loc.lat, longitude:loc.lng};
-      mapCenterManager.init(pos, this.getMap());
-      this.redrawRadius();
+  this.setAddress     = function(address){
+    return geoapiManager.getPosition(address)
+    .then(function(position){
+      this.setHomePosition(position);
+      this.redrawRadiusCircle();
     }.bind(this));
   };
 
-  this.redrawRadius   = function(){
-    if(mapRadius) { 
-      mapRadius.setMap(null);
+  this.getHomePosition = function(){ return this.home.getPosition(); };
+
+  //sets the home pin/position
+  this.setHomePosition = function(position){
+    if(this.home){ 
+      this.home.setMap(null); 
     }
-    mapRadius = new google.maps.Circle({
+    var pinImage = new google.maps.MarkerImage(
+      pinMarkerUri,
+      new google.maps.Size(21, 34),
+      new google.maps.Point(0,0),
+      new google.maps.Point(10, 34)
+    );
+    this.home = new google.maps.Marker({ 
+      'title': 'My position', 
+      'map': this.getMap(),
+      'draggable':true, 
+      'position': position, 
+      'icon': pinImage
+    });
+    if(!this.home.getPosition) debugger;
+    this.setCenterPosition(this.home.getPosition());
+
+    // google.maps.event.addListener(this.home, "dragend", function(e) { 
+    //   var position = new google.maps.LatLng(e.latLng.lat(), e.latLng.lng());
+    //   this.scope.address = position.lat()+','+position.lng();
+    //   this.set(position);
+    //   // this.scope.update();
+    //   $rootScope.$emit('dragend:home');
+    // }.bind(this));
+  };
+
+  this.setCenterPosition = function(position){
+    if(!this.map.getBounds()) return;
+    centerPosition = position;
+    this.redrawCenter();
+  };
+  //recenters map and offsets it
+  this.redrawCenter = function(){
+    var ne            = this.map.getBounds().getNorthEast();
+    var sw            = this.map.getBounds().getSouthWest();
+    var delta         = Math.abs(ne.lng()-sw.lng());
+    var lat           = 0.5 * (centerPosition.lat()+this.getHomePosition().lat());
+    var lng           = 0.5 * (centerPosition.lng()+this.getHomePosition().lng());
+    var offset = new google.maps.LatLng(lat, lng + delta*0.25*(-1));
+    this.map.setCenter(offset); 
+  };
+  this.redrawRadiusCircle   = function(){
+    if(radiusCircle) { 
+      radiusCircle.setMap(null);
+    }
+    radiusCircle = new google.maps.Circle({
       'strokeColor'   : '#b2182b',
       'strokeOpacity' : 0.7,
       'strokeWeight'  : 4,
       'fillColor'     : '#b2182b',
       'fillOpacity'   : 0.0,
       'map'           : this.getMap(),
-      'center'        : mapCenterManager.getHomePosition(),
+      'center'        : this.getHomePosition(),
       'radius'        : this.getRadius() * 1.624 * 1000  
     });
   };
@@ -59,7 +107,7 @@ app.service('mapManager', function($rootScope, $filter, geoapiManager, mapCenter
 
   this.setRadius      = function(value){
     radius = value;
-    this.redrawRadius();
+    this.redrawRadiusCircle();
   };
 
   this.update           = function(foodEvents){

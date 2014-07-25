@@ -9,13 +9,13 @@ angular.module('app.home.searchBar', [])
       radius: "=",
       events: "="
     },
-    controller: function($scope, $timeout, countManager, apiManager, mapManager, mapCenterManager, timeManager){
+    controller: function($scope, $timeout, countManager, apiManager, mapManager, timeManager){
       var filterAddressTimeout;
       $scope.events = [];
       $scope.getCount = countManager.get;
 
       var updateAddress = function(address){
-        mapManager.set(address);
+        mapManager.setAddress(address);
         apiManager.get(address).then(function(res){ 
           $scope.events = res.data.results; 
           for(var i = 0 ; i < $scope.events.length ; i++){
@@ -33,20 +33,20 @@ angular.module('app.home.searchBar', [])
           mapManager.update($scope.events);
         });
       };
-      mapManager.init($scope).then(function(position){
-        $scope.$watch('radius', function(val){
-          mapManager.setRadius(val);
-          mapManager.update($scope.events);
-        });
-        $scope.$watch('timeframe', function(val){
-          mapManager.update($scope.events);
-        });
-        $scope.$watch('address', function(val){
-          if(filterAddressTimeout) $timeout.cancel(filterAddressTimeout);
-          filterAddressTimeout = $timeout(function() {
-            updateAddress($scope.address);
-          }, 800);
-        });
+
+      mapManager.init($scope);
+      $scope.$watch('radius', function(val){
+        mapManager.setRadius(val);
+        mapManager.update($scope.events);
+      });
+      $scope.$watch('timeframe', function(val){
+        mapManager.update($scope.events);
+      });
+      $scope.$watch('address', function(val){
+        if(filterAddressTimeout) $timeout.cancel(filterAddressTimeout);
+        filterAddressTimeout = $timeout(function() {
+          updateAddress($scope.address);
+        }, 800);
       });
     }
   };

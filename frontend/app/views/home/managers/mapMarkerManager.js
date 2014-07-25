@@ -1,4 +1,4 @@
-app.service('mapMarkerManager', function(mapRouteManager, mapCenterManager, highlightMarkerUri){
+app.service('mapMarkerManager', function(mapRouteManager, highlightMarkerUri){
 
   var storage = [];
 
@@ -50,8 +50,8 @@ app.service('mapMarkerManager', function(mapRouteManager, mapCenterManager, high
     google.maps.event.addListener(marker, 'click', function() {
         this.closeWindow();
         this.onClick(foodEvent.marker);
-        mapRouteManager.get(mapCenterManager.getHomePosition(), foodEvent.marker.getPosition());
-        mapCenterManager.setCenterPosition(foodEvent.marker.getPosition());
+        mapRouteManager.get(mapManager.getHomePosition(), foodEvent.marker.getPosition());
+        // mapCenterManager.setCenterPosition(foodEvent.marker.getPosition());
     }.bind(this));
     foodEvent.highlightMarker = function(){ this.marker.setIcon(highlightMarkerUri); };
     foodEvent.normalizeMarker = function(){ this.marker.setIcon(null); };
