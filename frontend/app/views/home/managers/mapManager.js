@@ -16,12 +16,12 @@ app.service('mapManager', function($rootScope, $filter, geoapiManager, mapCenter
     }.bind(this));
     // ON WINDOW RESIZE, AUTO RE-CENTER THE MAP
     google.maps.event.addDomListener(window, 'resize', function(e) {
-      mapCenterManager.refresh(); 
+      mapCenterManager.redrawCenter(); 
     });
     return geoapiManager.init()
     .then(function(position){
-      mapCenterManager.init(position, scope, scope.mapWrapper);
-      mapCenterManager.setCoord(position.latitude, position.longitude);
+      mapCenterManager.init(position, scope.mapWrapper);
+      mapCenterManager.setCenterPosition(position);
     });
   };
 
@@ -34,12 +34,12 @@ app.service('mapManager', function($rootScope, $filter, geoapiManager, mapCenter
     .then(function(item){
       var loc = item.data.results[0].geometry.location;
       var pos = {latitude:loc.lat, longitude:loc.lng};
-      mapCenterManager.init(pos, this.scope, this.getMap());
-      this._redrawRadius();
+      mapCenterManager.init(pos, this.getMap());
+      this.redrawRadius();
     }.bind(this));
   };
 
-  this._redrawRadius   = function(){
+  this.redrawRadius   = function(){
     if(mapRadius) { 
       mapRadius.setMap(null);
     }
@@ -59,7 +59,7 @@ app.service('mapManager', function($rootScope, $filter, geoapiManager, mapCenter
 
   this.setRadius      = function(value){
     radius = value;
-    this._redrawRadius();
+    this.redrawRadius();
   };
 
   this.update           = function(foodEvents){
