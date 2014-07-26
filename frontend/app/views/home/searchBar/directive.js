@@ -11,14 +11,14 @@ angular.module('app.home.searchBar', [])
     },
     controller: function($scope, $timeout, $filter, countManager, apiManager, mapManager, timeManager){
       var filterAddressTimeout;
-      $scope.getCount = countManager.get;
+      $scope.getCount = countManager.getCount;
       $scope.foodEvents  = [];
 
       mapManager.init();
 
       var updateAddress = function(address){
         mapManager.setAddress(address);
-        apiManager.get(address)
+        apiManager.getEvents(address)
         .then(function(res){ 
           var foodEvents = res.data.results; 
           for(var i = 0 ; i < foodEvents.length ; i++){  

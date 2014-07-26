@@ -1,6 +1,6 @@
 angular.module('app.home.managers')
 
-.service('geoapiManager', function($http){
+.service('geocodeManager', function($http){
   var uri = 'https://maps.googleapis.com/maps/api/geocode/json?sensor=false&' ;
 
   //gets the latLng position for address: (returns a promise)

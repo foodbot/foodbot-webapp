@@ -2,7 +2,7 @@
 
 angular.module('app.home.managers')
 
-.service('mapManager', function($rootScope, geoapiManager, mapRouteManager, mapMarkerManager, appConstants){
+.service('mapManager', function($rootScope, geocodeManager, mapRouteManager, mapMarkerManager, appConstants){
   var radius;
   var centerPosition;
   var radiusCircle;
@@ -39,7 +39,7 @@ angular.module('app.home.managers')
   this.getMap           = function(){ return this.map; };
 
   this.setAddress       = function(address){
-    return geoapiManager.getPosition(address)
+    return geocodeManager.getPosition(address)
     .then(function(position){
       this.setHomePosition(position);
       this.redrawRadiusCircle();

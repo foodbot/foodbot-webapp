@@ -24,7 +24,7 @@ angular.module('app.home.managers')
     }.bind(this));
   };
 
-  this.get = function(orig, dest){
+  this.showRoute = function(orig, dest){
     this.setDestination(dest);
     request = {
       'origin'      : orig,

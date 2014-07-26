@@ -24,7 +24,7 @@ angular.module('app.home', [
   $scope.tableHeight = 0.7*$window.innerHeight;
   $scope.hasEvents   = false;
   $scope.showRoute   = function(foodEvent){
-    mapRouteManager.get(mapManager.getHomePosition(), foodEvent.marker.getPosition());
+    mapRouteManager.showRoute(mapManager.getHomePosition(), foodEvent.marker.getPosition());
   };
 });
 

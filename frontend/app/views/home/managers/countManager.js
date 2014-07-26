@@ -16,7 +16,7 @@ angular.module('app.home.managers')
     }
   };
 
-  this.get = function(timeframe, radius){
+  this.getCount = function(timeframe, radius){
     radius = radius || 5;
     return events[timeframe][radius];
   };
