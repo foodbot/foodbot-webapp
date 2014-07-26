@@ -14,7 +14,7 @@ app.config(function($httpProvider){
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
 });
-app.config(function($routeProvider, mapOptions) {
+app.config(function($routeProvider) {
   $routeProvider.when('/', {
     templateUrl:'/app/views/home/template.html',
     controller:'homeController'

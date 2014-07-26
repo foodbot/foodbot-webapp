@@ -1,6 +1,7 @@
 angular.module('app.home.managers')
 
-.service('mapMarkerManager', function(mapRouteManager, highlightMarkerUri){
+//basically has all the functions related to adding pins to the map
+.service('mapMarkerManager', function(mapRouteManager, appConstants){
 
   var storage = [];
 
@@ -25,7 +26,7 @@ angular.module('app.home.managers')
     this.lastInfo.open(marker.getMap(), marker);
   };
   
-  this.mixin = function(foodEvent, map){ 
+  this.addEventPin = function(foodEvent, map){ 
     var venue       = foodEvent.venue.address;
     var marker      = new google.maps.Marker({ 'title': foodEvent.title });
     var position    = new google.maps.LatLng(venue.latitude, venue.longitude);
@@ -40,7 +41,6 @@ angular.module('app.home.managers')
                '<a href="'+foodEvent.unique+'">'+foodEvent.description+'</a>'+
                '<b>@ '+foodEvent.venue.name+'</b>'+
                '<a href="'+foodEvent.unique+'">'+venue.address1+'</a>'+' - ' + venue.city;
-    marker.infoText   = html;
     marker.infoWindow = new google.maps.InfoWindow({ 
       'content': html, 
       'maxWidth':300,
@@ -55,7 +55,7 @@ angular.module('app.home.managers')
         mapRouteManager.get(mapManager.getHomePosition(), foodEvent.marker.getPosition());
         // mapCenterManager.setCenterPosition(foodEvent.marker.getPosition());
     }.bind(this));
-    foodEvent.highlightMarker = function(){ this.marker.setIcon(highlightMarkerUri); };
+    foodEvent.highlightMarker = function(){ this.marker.setIcon(appConstants.highlightMarkerUri); };
     foodEvent.normalizeMarker = function(){ this.marker.setIcon(null); };
     return foodEvent;
   };

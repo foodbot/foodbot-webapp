@@ -2,14 +2,14 @@
 
 angular.module('app.home.managers')
 
-.service('mapManager', function($rootScope, geoapiManager, mapRouteManager, mapMarkerManager, highlightMarkerUri, normalMarkerUri, pinMarkerUri, mapOptions){
+.service('mapManager', function($rootScope, geoapiManager, mapRouteManager, mapMarkerManager, appConstants){
   var radius;
   var centerPosition;
   var radiusCircle;
   var home;
 
   this.init           = function(){
-    this.map          = new google.maps.Map(map, mapOptions.default); //map defined globally
+    this.map          = new google.maps.Map(map, appConstants.mapOptions.default); //map defined globally
 
     mapRouteManager.init(this.map);
 
@@ -26,14 +26,14 @@ angular.module('app.home.managers')
       this.redrawCenter(); 
     }.bind(this));
 
-    var position = new google.maps.LatLng(37.7833,-122.4167); //Default location == sf
+    var position = appConstants.initialPosition; //Default location == sf
     this.setHomePosition(position);
   };
 
   this.updateMarkers     = function(foodEvents){
     mapMarkerManager.flush();
     for (var i = 0; i < foodEvents.length ; i++) {
-      mapMarkerManager.mixin(foodEvents[i], this.getMap());
+      mapMarkerManager.addEventPin(foodEvents[i], this.getMap());
     }
   };
   this.getMap           = function(){ return this.map; };
@@ -54,7 +54,7 @@ angular.module('app.home.managers')
       home.setMap(null); 
     }
     var pinImage = new google.maps.MarkerImage(
-      pinMarkerUri,
+      appConstants.pinMarkerUri,
       new google.maps.Size(21, 34),
       new google.maps.Point(0,0),
       new google.maps.Point(10, 34)
