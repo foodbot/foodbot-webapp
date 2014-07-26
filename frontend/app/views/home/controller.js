@@ -1,4 +1,4 @@
-angular.module('app.home.managers', []);
+angular.module('app.home.managers', ["shared.appConstants"]);
 angular.module('app.home.filters', ['app.home.managers']);
 
 angular.module('app.home', [
@@ -9,8 +9,6 @@ angular.module('app.home', [
   'app.home.logo',
   'ngMap',
   'angularMoment',
-  'angularSpinner',
-  'shared.mapConstants',
 ])
 
 .controller('homeController', function($scope, $window, mapManager, mapRouteManager){

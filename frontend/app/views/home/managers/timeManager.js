@@ -2,6 +2,7 @@ angular.module('app.home.managers')
 
 .service('timeManager', function(){
   var weekdays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  
   moment.lang('en', weekdays);  
   this.format = function(event){
     return moment(new Date(event.time)).calendar().replace(/(Today at )|(Tomorrow at )/,'');

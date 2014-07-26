@@ -39,7 +39,7 @@ angular.module('app.home.searchBar', [])
           filteredEvents = $filter('eventDistance')(filteredEvents, $scope.radius);
           filteredEvents = $filter('eventTime')(filteredEvents, $scope.timeframe);
 
-          countManager.update($scope.foodEvents);   
+          countManager.updateCount($scope.foodEvents);   
           mapManager.updateMarkers(filteredEvents);
         });
       };

@@ -1,27 +1,45 @@
 .hme-search-bar{
   position: relative;
   width: 395px;
+
+  .form-control{
+    display: inline-block;
+    width: 362px;
+    height: 33px;
+  }
+  .form-control:focus{
+    outline: 0;
+  }
   .icon-btn{
     display: inline-block;
     padding: 4px 6px 6px;
     margin-right: -2px;
     margin-left: 1px;
     width: 30px;
+    height: 32px;
     background-color: #fff;
     border-color: #ccc;
     border: 1px solid transparent;
     border-radius: 4px;
     text-align: center;
   }
-  .text-btn{
+  .btn{
     margin-right: -3px;
     width: 120px;
   }
-  .text-btn:focus{
+  .btn:focus{
     outline: 0;
   }
+  .badge{
+    opacity: 0.5;
+  }
   .btn-row{
-    margin-top: 1px;
+    // margin-top: 1px;
+  }
+  .text-row{
+    .icon-btn{
+      height:31px;
+    }
   }
 
 }

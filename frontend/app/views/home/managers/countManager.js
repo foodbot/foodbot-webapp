@@ -2,40 +2,53 @@ angular.module('app.home.managers')
 
 .service('countManager', function(timeManager){
 
-  var events = {
+  var eventCount = {
     'today'   :{1:0, 3:0, 5:0},
     'tomorrow':{1:0, 3:0, 5:0},
     'thisweek':{1:0, 3:0, 5:0}
   };
 
-  var init = function(){
-    for(var i in events) {
-      for(var j in events[i]){
-        events[i][j] = 0;
+  var resetCount = function(){
+    for(var timeframe in eventCount) {
+      for(var radius in eventCount[timeframe]){
+        eventCount[timeframe][radius] = 0;
       }
     }
   };
 
   this.getCount = function(timeframe, radius){
     radius = radius || 5;
-    return events[timeframe][radius];
+    return eventCount[timeframe][radius];
   };
 
-  this.update = function(foodEvent){
+  this.updateCount = function(foodEvent){
     var tonight = timeManager.tonight();
     var tomorrow = timeManager.tomorrow();
-    init();
+    resetCount();
     for(var i = 0 ; i < foodEvent.length ; i++){
       var t = new Date(foodEvent[i].time);
-      if(t <  tonight  &&                  foodEvent[i].distance < 1) events["today"][1]++;
-      if(t <  tonight  &&                  foodEvent[i].distance < 3) events["today"][3]++;
-      if(t <  tonight  &&                  foodEvent[i].distance < 5) events["today"][5]++;
-      if(t >= tonight  && t <  tomorrow && foodEvent[i].distance < 1) events["tomorrow"][1]++;
-      if(t >= tonight  && t <  tomorrow && foodEvent[i].distance < 3) events["tomorrow"][3]++;
-      if(t >= tonight  && t <  tomorrow && foodEvent[i].distance < 5) events["tomorrow"][5]++;
-      if(                 t >= tomorrow && foodEvent[i].distance < 1) events["thisweek"][1]++;
-      if(                 t >= tomorrow && foodEvent[i].distance < 3) events["thisweek"][3]++;
-      if(                 t >= tomorrow && foodEvent[i].distance < 5) events["thisweek"][5]++;
+
+      if(t < tonight){
+        for(var radius in eventCount["today"]){
+          if(foodEvent[i].distance < radius){
+            eventCount["today"][radius]++;
+          }
+        }
+      }
+      if(t >= tonight  && t <  tomorrow){
+        for(var radius in eventCount["tomorrow"]){
+          if(foodEvent[i].distance < radius){
+            eventCount["tomorrow"][radius]++;
+          }
+        }
+      }
+      if(t >= tomorrow){
+        for(var radius in eventCount["thisweek"]){
+          if(foodEvent[i].distance < radius){
+            eventCount["thisweek"][radius]++;
+          }
+        }
+      }
     }
   };
 });
