@@ -1,0 +1,10 @@
+angular.module('app.home.filters')
+
+.filter('capitalize', function(){
+  return function(input) {
+    if (input) {
+      input = input.toLowerCase();
+    }
+    return input.substring(0,1).toUpperCase()+input.substring(1);
+  }
+});

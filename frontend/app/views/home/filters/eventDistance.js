@@ -1,5 +1,7 @@
-app.filter('radius', function(mapManager){
-  mapDistance = function(foodEvent){
+angular.module('app.home.filters')
+
+.filter('eventDistance', function(mapManager){
+  var mapDistance = function(foodEvent){
     var pos   = mapManager.getHomePosition();
     var lat1  = (Math.PI / 180) * pos.lat()   ;
     var lat2  = (Math.PI / 180) * foodEvent.venue.address.latitude ;
@@ -12,9 +14,14 @@ app.filter('radius', function(mapManager){
     return Math.sqrt(x*x + y*y) * R * km2miles ;
   };
 
-  return function(foodEvent){
-    var result = mapDistance(foodEvent);
-    var radius = mapManager.getRadius();
-    return  result < radius ; 
+  return function(foodEvents, targetDistance){
+    var results = [];
+    for (var i = 0; i<foodEvents.length; i++){
+      var distance = mapDistance(foodEvents[i]);
+      if (distance < targetDistance){
+        results.push(foodEvents[i]);
+      }
+    }
+    return results;
   };
 });

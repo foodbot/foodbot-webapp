@@ -1,4 +1,6 @@
-app.service('countManager', function(timeManager){
+angular.module('app.home.managers')
+
+.service('countManager', function(timeManager){
 
   var events = {
     'today'   :{1:0, 3:0, 5:0},

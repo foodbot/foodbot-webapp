@@ -1,4 +1,6 @@
-app.service('apiManager', function($http){
+angular.module('app.home.managers')
+
+.service('apiManager', function($http){
   this.get = function(address){
     var time = new Date();
     time.setHours(0,0,0,1);

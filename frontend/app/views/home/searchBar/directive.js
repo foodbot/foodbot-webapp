@@ -7,40 +7,59 @@ angular.module('app.home.searchBar', [])
       address: "=",
       timeframe: "=",
       radius: "=",
-      events: "="
+      foodEvents: "="
     },
-    controller: function($scope, $timeout, countManager, apiManager, mapManager, timeManager){
+    controller: function($scope, $timeout, $filter, countManager, apiManager, mapManager, timeManager){
       var filterAddressTimeout;
-      $scope.events = [];
       $scope.getCount = countManager.get;
+      $scope.foodEvents  = [];
+
+      mapManager.init();
 
       var updateAddress = function(address){
         mapManager.setAddress(address);
-        apiManager.get(address).then(function(res){ 
-          $scope.events = res.data.results; 
-          for(var i = 0 ; i < $scope.events.length ; i++){
-            $scope.events[i].showDescription = false ;
-            $scope.events[i].showTags        = false ;
-            $scope.events[i].marker          = null ;
-            $scope.events[i].timeFMT         = timeManager.format($scope.events[i]);
-            if($scope.events[i].description.length > 283){
-              $scope.events[i].text = $scope.events[i].description.slice(0,283)+' ...';
+        apiManager.get(address)
+        .then(function(res){ 
+          var foodEvents = res.data.results; 
+          for(var i = 0 ; i < foodEvents.length ; i++){  
+            foodEvents[i].showDescription = false ;
+            foodEvents[i].showTags        = false ;
+            foodEvents[i].marker          = null ;
+            foodEvents[i].timeFMT         = timeManager.format(foodEvents[i]);
+
+            if(foodEvents[i].description.length > 283){
+              foodEvents[i].text = foodEvents[i].description.slice(0,283)+' ...';
             } else {
-              $scope.events[i].text = $scope.events[i].description;
+              foodEvents[i].text = foodEvents[i].description;
             }
           }
-          countManager.update($scope.events);   
-          mapManager.update($scope.events);
+          $scope.foodEvents = foodEvents;
+
+          var filteredEvents = $scope.foodEvents.slice();
+          filteredEvents = $filter('eventDistance')(filteredEvents, $scope.radius);
+          filteredEvents = $filter('eventTime')(filteredEvents, $scope.timeframe);
+
+          countManager.update($scope.foodEvents);   
+          mapManager.updateMarkers(filteredEvents);
         });
       };
 
-      mapManager.init($scope);
       $scope.$watch('radius', function(val){
         mapManager.setRadius(val);
-        mapManager.update($scope.events);
+        if($scope.foodEvents){
+          var filteredEvents = $scope.foodEvents.slice();
+          filteredEvents = $filter('eventDistance')(filteredEvents, $scope.radius);
+          filteredEvents = $filter('eventTime')(filteredEvents, $scope.timeframe);
+          mapManager.updateMarkers(filteredEvents);
+        }
       });
       $scope.$watch('timeframe', function(val){
-        mapManager.update($scope.events);
+        if($scope.foodEvents){
+          var filteredEvents = $scope.foodEvents.slice();
+          filteredEvents = $filter('eventDistance')(filteredEvents, $scope.radius);
+          filteredEvents = $filter('eventTime')(filteredEvents, $scope.timeframe);
+          mapManager.updateMarkers(filteredEvents);
+        }
       });
       $scope.$watch('address', function(val){
         if(filterAddressTimeout) $timeout.cancel(filterAddressTimeout);

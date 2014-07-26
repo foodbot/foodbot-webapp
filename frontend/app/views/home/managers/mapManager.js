@@ -1,13 +1,14 @@
 //all positions === new google.maps.LatLng(lat, lng); 
 
-app.service('mapManager', function($rootScope, $filter, geoapiManager, mapRouteManager, mapMarkerManager, highlightMarkerUri, normalMarkerUri, pinMarkerUri, mapOptions){
+angular.module('app.home.managers')
+
+.service('mapManager', function($rootScope, geoapiManager, mapRouteManager, mapMarkerManager, highlightMarkerUri, normalMarkerUri, pinMarkerUri, mapOptions){
   var radius;
   var centerPosition;
   var radiusCircle;
   var home;
 
-  this.init           = function(scope){
-    this.scope        = scope;
+  this.init           = function(){
     this.map          = new google.maps.Map(map, mapOptions.default); //map defined globally
 
     mapRouteManager.init(this.map);
@@ -19,7 +20,7 @@ app.service('mapManager', function($rootScope, $filter, geoapiManager, mapRouteM
     // ON WINDOW RESIZE, AUTO RE-CENTER THE MAP
     google.maps.event.addDomListener(window, 'resize', function(e) {
       this.redrawCenter(); 
-    });
+    }.bind(this));
 
     google.maps.event.addListener(map, 'zoom_changed', function(e){
       this.redrawCenter(); 
@@ -29,12 +30,10 @@ app.service('mapManager', function($rootScope, $filter, geoapiManager, mapRouteM
     this.setHomePosition(position);
   };
 
-  this.update           = function(foodEvents){
+  this.updateMarkers     = function(foodEvents){
     mapMarkerManager.flush();
     for (var i = 0; i < foodEvents.length ; i++) {
-      if($filter('isVisible')(foodEvents[i], this.scope)){
-        mapMarkerManager.mixin(foodEvents[i], this.getMap());
-      } 
+      mapMarkerManager.mixin(foodEvents[i], this.getMap());
     }
   };
   this.getMap           = function(){ return this.map; };

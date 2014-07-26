@@ -1,4 +1,6 @@
-app.service('mapMarkerManager', function(mapRouteManager, highlightMarkerUri){
+angular.module('app.home.managers')
+
+.service('mapMarkerManager', function(mapRouteManager, highlightMarkerUri){
 
   var storage = [];
 

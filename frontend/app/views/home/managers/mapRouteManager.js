@@ -1,4 +1,6 @@
-app.service('mapRouteManager', function($rootScope){
+angular.module('app.home.managers')
+
+.service('mapRouteManager', function($rootScope){
 
   var dest = null;
 

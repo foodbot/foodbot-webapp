@@ -1,26 +1,30 @@
+angular.module('app.home.managers', []);
+angular.module('app.home.filters', ['app.home.managers']);
 
 angular.module('app.home', [
-  'app.home.logo',
-  'app.home.searchBar',
+  'app.home.filters',
+  'app.home.managers',
   'app.home.searchResults',
+  'app.home.searchBar',
+  'app.home.logo',
   'ngMap',
   'angularMoment',
   'angularSpinner',
   'shared.mapConstants',
 ])
 
-.controller('homeController', function($scope, $timeout, $filter, $location, $window, mapManager, mapRouteManager, countManager, timeManager, apiManager){
+.controller('homeController', function($scope, $window, mapManager, mapRouteManager){
 
   $scope.address     = 'San Francisco';
   $scope.predicate   = 'time';
   $scope.reverse     = false;
   $scope.timeframe   = 'today';
   $scope.radius      = 5;
-  $scope.isVisible   = function(event){return $filter('isVisible')(event, $scope);};
+  $scope.foodEvents  = [];
   $scope.tableHeight = 0.7*$window.innerHeight;
   $scope.hasEvents   = false;
-  $scope.showRoute   = function(event){
-    mapRouteManager.get(mapManager.getHomePosition(), event.marker.getPosition());
+  $scope.showRoute   = function(foodEvent){
+    mapRouteManager.get(mapManager.getHomePosition(), foodEvent.marker.getPosition());
   };
 });
 

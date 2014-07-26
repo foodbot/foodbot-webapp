@@ -4,6 +4,7 @@ var app = angular.module('app', [
   'angularMoment',
   'angularSpinner',
   'app.home',
+  'app.home.managers'
 ]);
 
 // CORS: SET-UP IN ANGULAR-JS

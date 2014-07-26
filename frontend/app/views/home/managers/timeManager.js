@@ -1,4 +1,6 @@
-app.service('timeManager', function(){
+angular.module('app.home.managers')
+
+.service('timeManager', function(){
   var weekdays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   moment.lang('en', weekdays);  
   this.format = function(event){
