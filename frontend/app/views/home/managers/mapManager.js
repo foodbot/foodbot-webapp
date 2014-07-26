@@ -1,15 +1,14 @@
 //all positions === new google.maps.LatLng(lat, lng); 
 
 app.service('mapManager', function($rootScope, $filter, geoapiManager, mapRouteManager, mapMarkerManager, highlightMarkerUri, normalMarkerUri, pinMarkerUri, mapOptions){
-  var radius = 5;
-  var radiusCircle;
+  var radius;
   var centerPosition;
-  this.home = null;
+  var radiusCircle;
+  var home;
 
   this.init           = function(scope){
     this.scope        = scope;
-    this.map          = scope.map = new google.maps.Map(map, mapOptions.default); //map defined globally
-    this.address      = scope.address;
+    this.map          = new google.maps.Map(map, mapOptions.default); //map defined globally
 
     mapRouteManager.init(this.map);
 
@@ -30,9 +29,17 @@ app.service('mapManager', function($rootScope, $filter, geoapiManager, mapRouteM
     this.setHomePosition(position);
   };
 
-  this.getMap         = function(){ return this.map; };
+  this.update           = function(foodEvents){
+    mapMarkerManager.flush();
+    for (var i = 0; i < foodEvents.length ; i++) {
+      if($filter('isVisible')(foodEvents[i], this.scope)){
+        mapMarkerManager.mixin(foodEvents[i], this.getMap());
+      } 
+    }
+  };
+  this.getMap           = function(){ return this.map; };
 
-  this.setAddress     = function(address){
+  this.setAddress       = function(address){
     return geoapiManager.getPosition(address)
     .then(function(position){
       this.setHomePosition(position);
@@ -40,12 +47,12 @@ app.service('mapManager', function($rootScope, $filter, geoapiManager, mapRouteM
     }.bind(this));
   };
 
-  this.getHomePosition = function(){ return this.home.getPosition(); };
+  this.getHomePosition   = function(){ return home.getPosition(); };
 
   //sets the home pin/position
-  this.setHomePosition = function(position){
-    if(this.home){ 
-      this.home.setMap(null); 
+  this.setHomePosition   = function(position){
+    if(home){ 
+      home.setMap(null); 
     }
     var pinImage = new google.maps.MarkerImage(
       pinMarkerUri,
@@ -53,17 +60,17 @@ app.service('mapManager', function($rootScope, $filter, geoapiManager, mapRouteM
       new google.maps.Point(0,0),
       new google.maps.Point(10, 34)
     );
-    this.home = new google.maps.Marker({ 
+    home = new google.maps.Marker({ 
       'title': 'My position', 
       'map': this.getMap(),
       'draggable':true, 
       'position': position, 
       'icon': pinImage
     });
-    if(!this.home.getPosition) debugger;
-    this.setCenterPosition(this.home.getPosition());
+    if(!home.getPosition) debugger;
+    this.setCenterPosition(home.getPosition());
 
-    // google.maps.event.addListener(this.home, "dragend", function(e) { 
+    // google.maps.event.addListener(home, "dragend", function(e) { 
     //   var position = new google.maps.LatLng(e.latLng.lat(), e.latLng.lng());
     //   this.scope.address = position.lat()+','+position.lng();
     //   this.set(position);
@@ -78,7 +85,7 @@ app.service('mapManager', function($rootScope, $filter, geoapiManager, mapRouteM
     this.redrawCenter();
   };
   //recenters map and offsets it
-  this.redrawCenter = function(){
+  this.redrawCenter      = function(){
     var ne            = this.map.getBounds().getNorthEast();
     var sw            = this.map.getBounds().getSouthWest();
     var delta         = Math.abs(ne.lng()-sw.lng());
@@ -87,7 +94,8 @@ app.service('mapManager', function($rootScope, $filter, geoapiManager, mapRouteM
     var offset = new google.maps.LatLng(lat, lng + delta*0.25*(-1));
     this.map.setCenter(offset); 
   };
-  this.redrawRadiusCircle   = function(){
+
+  this.redrawRadiusCircle = function(){
     if(radiusCircle) { 
       radiusCircle.setMap(null);
     }
@@ -103,21 +111,14 @@ app.service('mapManager', function($rootScope, $filter, geoapiManager, mapRouteM
     });
   };
 
-  this.getRadius      = function(){ return radius; };
+  this.getRadius         = function(){ return radius; };
 
-  this.setRadius      = function(value){
+  this.setRadius         = function(value){
     radius = value;
     this.redrawRadiusCircle();
   };
 
-  this.update           = function(foodEvents){
-    mapMarkerManager.flush();
-    for (var i = 0; i < foodEvents.length ; i++) {
-      if($filter('isVisible')(foodEvents[i], this.scope)){
-        mapMarkerManager.mixin(foodEvents[i], this.getMap());
-      } 
-    }
-  };
+  
 
   
 });

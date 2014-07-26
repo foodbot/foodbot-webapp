@@ -8,13 +8,13 @@
     <span class="icon-btn">
       <span class="glyphicon glyphicon-time"></span>
     </span>
-    <button type="button" class="btn btn-default first-btn" ng-class="{active: timeframe == 'today'}" ng-click="timeframe = 'today'">
+    <button type="button" class="btn btn-default text-btn" ng-class="{active: timeframe == 'today'}" ng-click="timeframe = 'today'">
       Today <span style="opacity:.5" class="badge">{{ getCount("today") }}</span>
     </button>
-    <button type="button" class="btn btn-default second-btn" ng-class="{active: timeframe == 'tomorrow'}" ng-click="timeframe = 'tomorrow'">
+    <button type="button" class="btn btn-default text-btn" ng-class="{active: timeframe == 'tomorrow'}" ng-click="timeframe = 'tomorrow'">
       Tomorrow <span style="opacity:.5" class="badge">{{ getCount("tomorrow") }}</span>
     </button>
-    <button type="button" class="btn btn-default third-btn" ng-class="{active: timeframe == 'thisweek' }" ng-click="timeframe = 'thisweek'">
+    <button type="button" class="btn btn-default text-btn" ng-class="{active: timeframe == 'thisweek' }" ng-click="timeframe = 'thisweek'">
       Later <span style="opacity:.5" class="badge">{{ getCount("thisweek") }}</span>
     </button>
 
@@ -22,13 +22,13 @@
     <span class="icon-btn">
       <span class="glyphicon glyphicon-hand-right"></span>
     </span>
-    <button type="button" class="btn btn-default first-btn" ng-class="{active: radius == 1}" ng-click="radius = 1">
+    <button type="button" class="btn btn-default text-btn" ng-class="{active: radius == 1}" ng-click="radius = 1">
       < 1 mi. <span style="opacity:.5" class="badge">{{ getCount(timeframe, 1) }}</span>
     </button>
-    <button type="button" class="btn btn-default second-btn" ng-class="{active: radius == 3}" ng-click="radius = 3">
+    <button type="button" class="btn btn-default text-btn" ng-class="{active: radius == 3}" ng-click="radius = 3">
       < 3 mi. <span style="opacity:.5" class="badge">{{ getCount(timeframe, 3) }}</span>
     </button>
-    <button type="button" class="btn btn-default third-btn" ng-class="{active: radius == 5}" ng-click="radius = 5">
+    <button type="button" class="btn btn-default text-btn" ng-class="{active: radius == 5}" ng-click="radius = 5">
       < 5 mi. <span style="opacity:.5" class="badge">{{ getCount(timeframe, 5) }}</span>
     </button>
   </div>

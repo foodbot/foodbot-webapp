@@ -3,18 +3,14 @@
   <table class="table table-condensed table-hover" style="background-color:white;table-layout: fixed;border:grey;border-width:1px;">
     <tr>
       <th width="20%">
-        <button width="100%" type="button" class="btn btn-sm" 
-          ng-class="{active: predicate == 'time'}"
-          ng-click="predicate = 'time'">
+        <button width="100%" type="button" class="btn btn-sm" ng-class="{active: predicate == 'time'}" ng-click="predicate = 'time'">
           <div class="glyphicon glyphicon-time"/></span>
           <div class="glyphicon glyphicon-sort-by-attributes"/>
         </button>
       </th>
       <th width="52%">Event</th>
       <th width="10%">
-        <button type="button" class="btn btn-sm" 
-          ng-class="{active: predicate == 'distance'}"
-          ng-click="predicate = 'distance'">
+        <button type="button" class="btn btn-sm" ng-class="{active: predicate == 'distance'}" ng-click="predicate = 'distance'">
           <div class="glyphicon glyphicon-hand-right"/></span>
           <div class="glyphicon glyphicon-sort-by-attributes"/>
         </button>
@@ -23,35 +19,19 @@
       <th width="9.5%">Route</th>
     </tr>
   
-    <tr style="border-top-style:solid; border-top-color:#BBBBBB; border-top-width:1px" 
-      ng-repeat="event in events | filter:isVisible | orderBy: predicate: reverse " >
-      <td width="120px" 
-        ng-mouseover="event.highlightMarker();" ng-mouseout="event.normalizeMarker();">
+    <tr style="border-top-style:solid; border-top-color:#BBBBBB; border-top-width:1px" ng-repeat="event in events | filter:isVisible | orderBy: predicate: reverse " >
+      <td width="120px" ng-mouseover="event.highlightMarker();" ng-mouseout="event.normalizeMarker();">
         <span style="color:#888">{{ event.timeFMT | capitalize }}</span>
 
-        <button 
-          type="button" 
-          class="btn btn-sm" 
-          style="float:right"
-          ng-show="event.showDescription " 
-          ng-click="event.showDescription = !event.showDescription"> 
+        <button type="button" class="btn btn-sm" style="float:right" ng-show="event.showDescription" ng-click="event.showDescription = !event.showDescription"> 
           <span class="glyphicon glyphicon-resize-small"/>
         </button>
-        <button 
-          type="button" 
-          class="btn btn-sm" 
-          style="float:right" 
-          ng-show="!event.showDescription " 
-          ng-click="event.showDescription = !event.showDescription" >
+        <button type="button" class="btn btn-sm" style="float:right" ng-show="!event.showDescription" ng-click="event.showDescription = !event.showDescription" >
           <span class="glyphicon glyphicon-resize-full"/>
         </button>
       </td>
 
-      <td  
-        ng-click="event.showDescription = !event.showDescription" 
-        ng-mouseover="event.highlightMarker();"
-        ng-mouseout="event.normalizeMarker()"
-        onmouseover="" style="cursor: pointer;">
+      <td ng-click="event.showDescription = !event.showDescription" ng-mouseover="event.highlightMarker();" ng-mouseout="event.normalizeMarker()" onmouseover="" style="cursor: pointer;">
 
         <b style="color:#222">{{ event.name | capitalize }}</b>
          <p style="color:#444;line-height:1.5" class="text-justify" ng-show="event.showDescription"> {{event.text}} </p>
@@ -73,16 +53,12 @@
           <img src="/assets/by-dmitry-baranovskiy/icon_10959.svg" class="tag"
             alt="Coffee" ng-show="item == 'coffee'" />
         </span>
-        <span ng-repeat="item in event.foodProvided" class="badge"
-          style="float:right;margin:0 4px 0 4px"
-          ng-click="event.showTags = !event.showTags"
-          ng-show="event.showTags"> {{item}} </span>
+        <span ng-repeat="item in event.foodProvided" class="badge" style="float:right;margin:0 4px 0 4px" ng-click="event.showTags = !event.showTags" ng-show="event.showTags">
+          {{item}} 
+        </span>
       </td>
 
-      <td width="140px" 
-        ng-click="showRoute(event)"
-        ng-mouseover="event.highlightMarker();"
-        ng-mouseout="event.normalizeMarker();" style="text-align:right">
+      <td width="140px" ng-click="showRoute(event)" ng-mouseover="event.highlightMarker();" ng-mouseout="event.normalizeMarker();" style="text-align:right">
         <span style="color:#888">
           At {{ event.distance | number:1 }} mi. 
         </span>

@@ -1,6 +1,6 @@
 app.filter('time', function(timeManager){
-  return function(event, scope) {
-    var aTime = new Date(event.time);
+  return function(foodEvent, scope) {
+    var aTime = new Date(foodEvent.time);
     if(scope.timeframe === "today"){
       return aTime < timeManager.tonight();
     } else if(scope.timeframe === "tomorrow"){
