@@ -21,8 +21,8 @@ var concatLibJS = function() {
       './frontend/lib/angular-route/angular-route.js',
       './frontend/lib/angular-moment/angular-moment.js',
       './frontend/lib/angularjs-google-maps/dist/ng-map.js',
-      './frontend/lib/spin.js/spin.js',
-      './frontend/lib/angular-spinner/angular-spinner.js',
+      './frontend/lib/StickyTableHeaders/js/jquery.stickytableheaders.js',
+
     ])
     .pipe(concat('lib.js'))
     .pipe(gulp.dest(publicAssetsDir));
@@ -33,7 +33,9 @@ var concatAppJS = function() {
     .pipe(gulp.dest(publicAssetsDir));
 };
 var concatCSS = function(){
-  return gulp.src('./frontend/app/**/*.styl')
+  return gulp.src([
+    './frontend/app/**/*.styl',
+    ])
     .pipe(stylus({use: [nib()]}))
     .pipe(concat('app.css'))
     .pipe(gulp.dest(publicAssetsDir));

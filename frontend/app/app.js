@@ -1,8 +1,5 @@
 var app = angular.module('app', [
   'ngRoute',
-  'ngMap',
-  'angularMoment',
-  'angularSpinner',
   'app.home',
   'app.home.managers'
 ]);
