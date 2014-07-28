@@ -17,7 +17,7 @@ angular.module('app.home.managers')
   this.thisweek = function(){
     var tonight = new Date(); 
     tonight.setHours(23,59,59,999); 
-    var tomorrow = new Date(tonight.getFullYear(), tonight.getMonth(), tonight.getDate()+7);
+    var tomorrow = new Date(tonight.getFullYear(), tonight.getMonth(), tonight.getDate()+6);
     tomorrow.setHours(23,59,59,999);
     return tomorrow;
   };

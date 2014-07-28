@@ -19,8 +19,6 @@ var concatLibJS = function() {
       './frontend/lib/underscore/underscore.js',
       './frontend/lib/angular/angular.js',
       './frontend/lib/angular-route/angular-route.js',
-      './frontend/lib/angularjs-google-maps/dist/ng-map.js',
-
     ])
     .pipe(concat('lib.js'))
     .pipe(gulp.dest(publicAssetsDir));
@@ -39,7 +37,11 @@ var concatCSS = function(){
     .pipe(gulp.dest(publicAssetsDir));
 };
 var copyStuff = function() {
-  return gulp.src(['./frontend/**/*', '!./frontend/**/*.js', '!./frontend/**/*.styl', '!./frontend/lib/**/*'])
+  return gulp.src([
+    './frontend/**/*', 
+    '!./frontend/**/*.js', 
+    '!./frontend/**/*.styl', 
+    '!./frontend/lib/**/*'])
     .pipe(filterEmptyDirs())
     .pipe(gulp.dest(publicDir));
 };

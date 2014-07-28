@@ -9,7 +9,7 @@ angular.module('app.home.managers')
   var home;
 
   this.init           = function(){
-    this.map          = new google.maps.Map(map, appConstants.mapOptions.default); //map defined globally
+    this.map          = new google.maps.Map(document.getElementById("map"), appConstants.mapOptions.default); //map defined globally
 
     mapRouteManager.init(this.map);
 
@@ -53,18 +53,12 @@ angular.module('app.home.managers')
     if(home){ 
       home.setMap(null); 
     }
-    var pinImage = new google.maps.MarkerImage(
-      appConstants.pinMarkerUri,
-      new google.maps.Size(21, 34),
-      new google.maps.Point(0,0),
-      new google.maps.Point(10, 34)
-    );
     home = new google.maps.Marker({ 
       'title': 'My position', 
       'map': this.getMap(),
       'draggable':true, 
       'position': position, 
-      'icon': pinImage
+      'icon': appConstants.homeMarkerUri
     });
     if(!home.getPosition) debugger;
     this.setCenterPosition(home.getPosition());

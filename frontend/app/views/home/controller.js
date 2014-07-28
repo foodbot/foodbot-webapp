@@ -2,7 +2,6 @@ angular.module('app.home', [
   'app.home.searchResults',
   'app.home.searchBar',
   'app.home.logo',
-  'ngMap',
 ])
 
 .controller('homeController', function($scope, $window){

@@ -23,8 +23,5 @@
     "angular-route": "~1.2.16",
     "bootstrap": "~3.1.1",
     "angularjs-google-maps": "https://github.com/allenhwkim/angularjs-google-maps.git#~0.3.8"
-  },
-  "resolutions": {
-    "underscore": "~1.5.x"
   }
 }

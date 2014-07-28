@@ -32,6 +32,7 @@ angular.module('app.home.managers')
     var position    = new google.maps.LatLng(venue.latitude, venue.longitude);
     marker.setPosition(position);
     marker.setMap(map);
+    marker.setIcon(appConstants.normalMarkerUri);
     var description = foodEvent.description;
     if(description.length>143){
       foodEvent.description = foodEvent.description.slice(0,143)+'...';
@@ -55,8 +56,18 @@ angular.module('app.home.managers')
         mapRouteManager.get(mapManager.getHomePosition(), foodEvent.marker.getPosition());
         // mapCenterManager.setCenterPosition(foodEvent.marker.getPosition());
     }.bind(this));
-    foodEvent.highlightMarker = function(){ this.marker.setIcon(appConstants.highlightMarkerUri); };
-    foodEvent.normalizeMarker = function(){ this.marker.setIcon(null); };
+    var pinHighlightImage = new google.maps.MarkerImage(
+      appConstants.highlightMarkerUri,
+      new google.maps.Size(46, 53),
+      new google.maps.Point(0,0),
+      new google.maps.Point(10, 34)
+    );
+    foodEvent.highlightMarker = function(){ 
+      this.marker.setIcon(appConstants.highlightMarkerUri); 
+      this.marker.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
+    };
+    
+    foodEvent.normalizeMarker = function(){ this.marker.setIcon(appConstants.normalMarkerUri); };
     return foodEvent;
   };
 });
