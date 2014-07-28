@@ -1,8 +1,11 @@
-feed-me-api
+foodbot-webapp
 ===========
 
-REST api server for FeedMe!
+Rest API + client-side app server.
 
-To use first: npm install
+Dependencies: node, bower, npm, gulp, nodemon
 
-See Asana for API keys.
+To run: Fill out run.sh with your API keys, and type '. run.sh'
+
+(Needs to have the foodbot scraper up and running also)
+
