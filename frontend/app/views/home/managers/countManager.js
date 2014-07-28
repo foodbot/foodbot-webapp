@@ -24,6 +24,8 @@ angular.module('app.home.managers')
   this.updateCount = function(foodEvent){
     var tonight = timeManager.tonight();
     var tomorrow = timeManager.tomorrow();
+    var thisweek = timeManager.thisweek();
+
     resetCount();
     for(var i = 0 ; i < foodEvent.length ; i++){
       var t = new Date(foodEvent[i].time);
@@ -35,14 +37,14 @@ angular.module('app.home.managers')
           }
         }
       }
-      if(t >= tonight  && t <  tomorrow){
+      if(t >= tonight && t < tomorrow){
         for(var radius in eventCount["tomorrow"]){
           if(foodEvent[i].distance < radius){
             eventCount["tomorrow"][radius]++;
           }
         }
       }
-      if(t >= tomorrow){
+      if(t >= tomorrow && t < thisweek){
         for(var radius in eventCount["thisweek"]){
           if(foodEvent[i].distance < radius){
             eventCount["thisweek"][radius]++;

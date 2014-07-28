@@ -1,10 +1,8 @@
-<div ng-class="{withfadeout:isSpinning, withfadein:!isSpinning}">
-  <map zoom="{{mapZoom}}" center="San Francisco" id="map"></map>
-</div>
+<map zoom="{{mapZoom}}" center="California" id="map"></map>
 
 <logo></logo>
 
 <search-bar address="address" timeframe="timeframe" radius="radius" food-events="foodEvents"></search-bar>
 <br />
-<search-results></search-results>
+<search-results timeframe="timeframe" radius="radius" food-events="foodEvents"></search-results>
 

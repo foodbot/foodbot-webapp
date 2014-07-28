@@ -1,7 +1,6 @@
 var app = angular.module('app', [
   'ngRoute',
   'app.home',
-  'app.home.managers'
 ]);
 
 // CORS: SET-UP IN ANGULAR-JS

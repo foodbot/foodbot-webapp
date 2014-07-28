@@ -1,7 +1,9 @@
-angular.module('shared.appConstants', [])
+angular.module('shared.appConstants', [
+  'shim.google',
+])
 
 // http://snazzymaps.com/style/1/pale-dawn
-.service('appConstants', function(){
+.service('appConstants', function(google){
   this.initialPosition = new google.maps.LatLng(37.7833,-122.4167); //SF
   this.highlightMarkerUri = 'http://maps.google.com/mapfiles/marker_orange.png';
   this.normalMarkerUri = 'http://maps.google.com/intl/en_us/mapfiles/ms/micons/red-dot.png';

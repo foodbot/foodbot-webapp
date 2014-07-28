@@ -4,27 +4,28 @@
   padding: 0px;
   width: 700px;
 
-  .table{
+  table{
+    border-radius: 5px; 
     background-color: white;
-    table-layout: fixed;
-    border: grey;
-    border-width:1px;
+
   }
-  .table th{
-    border-bottom: 1px;
-  }
-  .table .left-column{
-    padding-left:7px;
+  thead > tr > td{
+    font-weight: 700;
+    border-bottom: #AAA 1px solid;
   }
   thead > tr, tbody{
     display:block;
   }
   tbody{
-    max-height: 350px;
     overflow: auto;
   }
+  tbody > tr:first-child > td{
+    border-top: none;
+  }
+
   .first-column{
-    width: 160px;
+    width: 170px;
+    padding-left: 10px;
   }
   .second-column{
     width: 400px;
@@ -55,5 +56,12 @@
   }
   .route-btn{
     height: 20px;
+  }
+  .tag {
+    position: relative;
+    float   : right;
+    margin  : 0 4px;
+    height  : 17px; 
+    opacity : 0.5;
   }
 }

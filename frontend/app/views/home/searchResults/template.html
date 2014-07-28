@@ -2,24 +2,24 @@
     <table class="table table-condensed table-hover">
       <thead>
         <tr class="table-header">
-          <th class="first-column">
+          <td class="first-column">
             <button type="button" class="btn btn-sm" ng-class="{active: orderCriteria == 'time'}" ng-click="orderCriteria = 'time'">
               <span class="glyphicon glyphicon-time"></span>
               <span class="glyphicon glyphicon-sort-by-attributes"></span>
             </button>
-          </th>
-          <th class="second-column"> Event </th>
-          <th class="third-column">
+          </td>
+          <td class="second-column"> Event </td>
+          <td class="third-column">
             <button type="button" class="btn btn-sm" ng-class="{active: orderCriteria == 'distance'}" ng-click="orderCriteria = 'distance'">
               <span class="glyphicon glyphicon-hand-right"></span>
               <span class="glyphicon glyphicon-sort-by-attributes"></span>
             </button>
-          </th>
-          <th class="fourth-column"> Route </th>
+          </td>
+          <td class="fourth-column"> Route </td>
         </tr>
       </thead>
-      <tbody>
-        <tr ng-repeat="foodEvent in foodEvents | eventDistance: radius | eventTime: timeframe | orderBy: orderCriteria: reverse" ng-mouseover="foodEvent.highlightMarker();" ng-mouseout="foodEvent.normalizeMarker()">
+      <tbody max-height-offsetted="320">
+        <tr ng-repeat="foodEvent in foodEvents | eventDistance: radius | eventTime: timeframe | orderBy: orderCriteria" ng-mouseover="foodEvent.highlightMarker();" ng-mouseout="foodEvent.normalizeMarker()">
           
           <td class="first-column">
             <span class="info-text"> {{ foodEvent.timeFMT | capitalize }} </span>
@@ -40,7 +40,7 @@
           </td>
           <td class="fourth-column">
             <button type="button" class="btn btn-sm" ng-click="showRoute(foodEvent)"> 
-              <img class="tag route-btn" src="/assets/by-melvin-popelaars/icon_29608.svg" style="height:20px" />
+              <img class="tag route-btn" src="/assets/routeIcon.svg" style="height:20px" />
             </button>
           </td>
         </tr>

@@ -1,7 +1,7 @@
 angular.module('app.home.managers')
 
 //basically has all the functions related to adding pins to the map
-.service('mapMarkerManager', function(mapRouteManager, appConstants){
+.service('mapMarkerManager', function(mapRouteManager, appConstants, google){
 
   var storage = [];
 

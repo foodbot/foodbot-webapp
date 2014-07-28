@@ -1,15 +1,36 @@
-angular.module('app.home.searchResults', [])
+angular.module('app.home.searchResults', [
+  'app.home.managers',
+  'app.home.filters',
+  'shim.jquery'
+  ])
 
 .directive("searchResults", function(){
   return {
     restrict: 'E',
-    templateUrl: '/app/views/home/searchResults/template.html', 
-    controller: function($scope){
-      setTimeout(function(){
-        // $('table').fixedHeaderTable({ footer: false, cloneHeadToFoot: false, fixedColumn: false });
-        // $("table").stickyTableHeaders();
-        console.log("stickyTable")
-      }, 10000)
+    templateUrl: '/app/views/home/searchResults/template.html',
+    scope:{
+      timeframe: "=",
+      radius: "=",
+      foodEvents: '=',
+    },
+    controller: function($scope, $window, mapManager, mapRouteManager){
+      $scope.orderCriteria = 'time';
+      $scope.showRoute = function(foodEvent){
+        mapRouteManager.showRoute(mapManager.getHomePosition(), foodEvent.marker.getPosition());
+      };
+    }
+  };
+})
+.directive("maxHeightOffsetted", function($window, $){
+   return {
+    restrict: 'A',
+    link: function(scope, elem, attrs){
+      var offset = attrs.maxHeightOffsetted;
+
+      elem.css('max-height', $window.innerHeight - offset + 'px');
+      $(window).resize(function(){
+        elem.css('max-height', $window.innerHeight - offset + 'px');
+      });
     }
   };
 })

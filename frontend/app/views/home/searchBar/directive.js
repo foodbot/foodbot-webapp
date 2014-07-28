@@ -1,4 +1,7 @@
-angular.module('app.home.searchBar', [])
+angular.module('app.home.searchBar', [
+  'app.home.managers',
+  'shim.moment',
+])
 .directive("searchBar", function(){
   return {
     restrict: 'E',
@@ -9,13 +12,21 @@ angular.module('app.home.searchBar', [])
       radius: "=",
       foodEvents: "="
     },
-    controller: function($scope, $timeout, $filter, countManager, apiManager, mapManager, timeManager){
+    controller: function($scope, $timeout, $filter, countManager, apiManager, mapManager, timeManager, moment){
       var filterAddressTimeout;
       $scope.getCount = countManager.getCount;
-      $scope.foodEvents  = [];
 
       mapManager.init();
-
+      moment.lang('en', {
+        calendar : {
+          lastDay : 'LT',
+          sameDay : 'LT',
+          nextDay : 'LT',
+          lastWeek : '[last] dddd [at] LT',
+          nextWeek : 'ddd - LT',
+          sameElse : 'L'
+        }
+      });  
       var updateAddress = function(address){
         mapManager.setAddress(address);
         apiManager.getEvents(address)
@@ -25,7 +36,7 @@ angular.module('app.home.searchBar', [])
             foodEvents[i].showDescription = false ;
             foodEvents[i].showTags        = false ;
             foodEvents[i].marker          = null ;
-            foodEvents[i].timeFMT         = timeManager.format(foodEvents[i]);
+            foodEvents[i].timeFMT         = moment(new Date(foodEvents[i].time)).calendar() ;
 
             if(foodEvents[i].description.length > 283){
               foodEvents[i].text = foodEvents[i].description.slice(0,283)+' ...';

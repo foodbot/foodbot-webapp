@@ -2,7 +2,7 @@
 
 angular.module('app.home.managers')
 
-.service('mapManager', function($rootScope, geocodeManager, mapRouteManager, mapMarkerManager, appConstants){
+.service('mapManager', function($rootScope, geocodeManager, mapRouteManager, mapMarkerManager, google, appConstants){
   var radius;
   var centerPosition;
   var radiusCircle;
@@ -17,13 +17,13 @@ angular.module('app.home.managers')
       this.redrawRadiusCircle();
     }.bind(this));
 
-    // ON WINDOW RESIZE, AUTO RE-CENTER THE MAP
     google.maps.event.addDomListener(window, 'resize', function(e) {
       this.redrawCenter(); 
     }.bind(this));
 
-    google.maps.event.addListener(map, 'zoom_changed', function(e){
+    google.maps.event.addListener(this.map, 'zoom_changed', function(e){
       this.redrawCenter(); 
+      console.log("redrawCenter");
     }.bind(this));
 
     var position = appConstants.initialPosition; //Default location == sf

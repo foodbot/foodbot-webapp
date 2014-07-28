@@ -22,11 +22,7 @@
     "angular": "~1.2.16",
     "angular-route": "~1.2.16",
     "bootstrap": "~3.1.1",
-    "angular-google-maps": "~1.0.18",
-    "angular-moment": "~0.6.2",
-    "angularjs-google-maps": "https://github.com/allenhwkim/angularjs-google-maps.git#~0.3.8",
-    "heatmap.js": "https://github.com/pa7/heatmap.js.git",
-    "StickyTableHeaders": "~0.1.11"
+    "angularjs-google-maps": "https://github.com/allenhwkim/angularjs-google-maps.git#~0.3.8"
   },
   "resolutions": {
     "underscore": "~1.5.x"

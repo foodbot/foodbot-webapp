@@ -1,6 +1,6 @@
 angular.module('app.home.managers')
 
-.service('mapRouteManager', function($rootScope){
+.service('mapRouteManager', function($rootScope, google){
 
   var dest = null;
 
@@ -19,9 +19,6 @@ angular.module('app.home.managers')
 
   this.init = function(map){
     this.directionsDisplay.setMap(map); 
-    google.maps.event.addListener(this.directionsDisplay, 'directions_changed', function() {
-      // mapCenterManager.setCenterPosition(this.getDestination()); 
-    }.bind(this));
   };
 
   this.showRoute = function(orig, dest){

@@ -19,9 +19,7 @@ var concatLibJS = function() {
       './frontend/lib/underscore/underscore.js',
       './frontend/lib/angular/angular.js',
       './frontend/lib/angular-route/angular-route.js',
-      './frontend/lib/angular-moment/angular-moment.js',
       './frontend/lib/angularjs-google-maps/dist/ng-map.js',
-      './frontend/lib/StickyTableHeaders/js/jquery.stickytableheaders.js',
 
     ])
     .pipe(concat('lib.js'))
