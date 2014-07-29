@@ -1,3 +1,5 @@
+@import 'nib'
+
 .hme-search-bar{
   position: relative;
   width: 395px;
@@ -5,7 +7,8 @@
   .form-control{
     display: inline-block;
     width: 362px;
-    height: 33px;
+    height: 31px;
+    border: 1px solid #9a9a9a;
   }
   .form-control:focus{
     outline: 0;
@@ -13,13 +16,12 @@
   .icon-btn{
     display: inline-block;
     padding: 4px 6px 6px;
-    margin-right: -2px;
-    margin-left: 1px;
+    margin: 0 -2px 0px 1px;
     width: 30px;
     height: 32px;
-    background-color: #fff;
-    border-color: #ccc;
-    border: 1px solid transparent;
+    background-image: linear-gradient(to top, #EBEBEB 0%, #ECECEC 50%, #F3F3F3 50%, #FFF 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,1), 0 1px 0 rgba(0,0,0,0.09);
+    border: 1px solid #9a9a9a;
     border-radius: 4px;
     text-align: center;
   }
@@ -30,15 +32,35 @@
   .btn:focus{
     outline: 0;
   }
+  .btn-osx{
+    height: 32px;
+    border-color: #9a9a9a;
+    background-image: linear-gradient(to top, #EBEBEB 0%, #ECECEC 50%, #F3F3F3 50%, #FFF 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,1), 0 1px 0 rgba(0,0,0,0.09);
+  }
+  .btn-osx.active{
+    color: #383232;
+    background: linear-gradient(top, #bcd6ef 0%, #a3c1ef 5%, #98b8e9 10%, #91b3e9 15%, /* W3C */ #8ab1e9 20%, #8ab2ea 25%, #83abe8 30%, #7cabe9 35%, #73a6e8 40%, #6ca4e9 45%, #67a1e9 50%, #4693ea 50%, #579eec 70%, #64a7ee 75%, #6eaeee 80%, #7db6ef 85%, #88bfef 90%, #97caef 95%, #abd4ef 100%);
+    border-top-color: #5F6392;
+    border-bottom-color: #6E6E88;
+    border-left-color: #575872;
+    border-right-color: #4E51A7;
+    box-shadow: none;
+    .badge{
+      opacity: 0.85;
+    }
+  }
   .badge{
-    opacity: 0.5;
+    opacity: 0.9;
   }
   .btn-row{
     // margin-top: 1px;
   }
   .text-row{
+    margin-bottom: 1px;
+
     .icon-btn{
-      height:31px;
+      height: 31px;
     }
   }
 
