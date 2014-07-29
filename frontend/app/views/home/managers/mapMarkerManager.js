@@ -28,11 +28,18 @@ angular.module('app.home.managers')
   
   this.addEventPin = function(foodEvent, map){ 
     var venue       = foodEvent.venue.address;
-    var marker      = new google.maps.Marker({ 'title': foodEvent.title });
     var position    = new google.maps.LatLng(venue.latitude, venue.longitude);
-    marker.setPosition(position);
-    marker.setMap(map);
-    marker.setIcon(appConstants.normalMarkerUri);
+    var marker      = new google.maps.Marker({ 
+      title: foodEvent.title,
+      animation: google.maps.Animation.DROP,
+      position: position,
+      icon: appConstants.blankMarkerUri,
+      map: map,
+    });
+    //this fixes flicker bug on chrome
+    setTimeout(function(){
+      marker.setIcon(appConstants.normalMarkerUri);
+    }, 100);
     var description = foodEvent.description;
     if(description.length>143){
       foodEvent.description = foodEvent.description.slice(0,143)+'...';
@@ -67,7 +74,9 @@ angular.module('app.home.managers')
       this.marker.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
     };
     
-    foodEvent.normalizeMarker = function(){ this.marker.setIcon(appConstants.normalMarkerUri); };
+    foodEvent.normalizeMarker = function(){ 
+      this.marker.setIcon(appConstants.normalMarkerUri);
+    };
     return foodEvent;
   };
 });

@@ -39,9 +39,10 @@ angular.module('app.home.managers')
   this.getMap           = function(){ return this.map; };
 
   this.setAddress       = function(address){
+    console.log("Address:", address);
     return geocodeManager.getPosition(address)
     .then(function(position){
-      this.setHomePosition(position);
+      this.setHomePosition(position, true);
       this.redrawRadiusCircle();
     }.bind(this));
   };
@@ -49,17 +50,26 @@ angular.module('app.home.managers')
   this.getHomePosition   = function(){ return home.getPosition(); };
 
   //sets the home pin/position
-  this.setHomePosition   = function(position){
+  this.setHomePosition   = function(position, replacePin){
+    console.log(position);
     if(home){ 
       home.setMap(null); 
     }
-    home = new google.maps.Marker({ 
-      'title': 'My position', 
-      'map': this.getMap(),
-      'draggable':true, 
-      'position': position, 
-      'icon': appConstants.homeMarkerUri
+    var marker = home = new google.maps.Marker({ 
+      title: 'My position', 
+      map: this.getMap(),
+      draggable:true, 
+      position: position, 
+      icon: appConstants.blankMarkerUri,
+      animation: google.maps.Animation.DROP,
+
     });
+    //this fixes flicker bug on chrome
+    if(replacePin){
+      setTimeout(function(){
+        marker.setIcon(appConstants.homeMarkerUri);
+      }, 200);
+    }
     if(!home.getPosition) debugger;
     this.setCenterPosition(home.getPosition());
 
