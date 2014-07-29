@@ -21,26 +21,29 @@
       <tbody max-height-offsetted="320">
         <tr ng-repeat="foodEvent in foodEvents | eventDistance: radius | eventTime: timeframe | orderBy: orderCriteria" ng-mouseover="foodEvent.highlightMarker();" ng-mouseout="foodEvent.normalizeMarker()">
           
-          <td class="first-column">
-            <span class="info-text"> {{ foodEvent.timeFMT | capitalize }} </span>
-            <button type="button" class="btn btn-sm pull-right" ng-click="foodEvent.showDescription = !foodEvent.showDescription"> 
+          <td class="first-column clickable" ng-click="foodEvent.showDescription = !foodEvent.showDescription">
+            <span class="date-text"> {{ foodEvent.timeFMT | capitalize }} </span>
+            <button type="button" class="btn btn-sm pull-right" > 
               <span class="glyphicon glyphicon-resize-small" ng-show="foodEvent.showDescription"></span>
               <span class="glyphicon glyphicon-resize-full" ng-hide="foodEvent.showDescription"></span>
             </button>
           </td>
 
           <td class="second-column clickable" ng-click="foodEvent.showDescription = !foodEvent.showDescription">
-            <b class="title-text"> {{ foodEvent.name | capitalize }} </b>
+            <a ng-href="{{foodEvent.url}}" ng-click="$event.stopPropagation();"><b class="title-text"> {{ foodEvent.name | capitalize }} </b></a>
             <p class="description-text text-justify" ng-show="foodEvent.showDescription"> {{foodEvent.text}} </p>
-            <span ng-repeat="item in foodEvent.foodProvided" class="badge"> {{item}} </span>
+            <div class="bottom-row">
+              <span class="url-text"><a ng-href="{{foodEvent.url| baseUrl}}" ng-click="$event.stopPropagation();">{{foodEvent.url | baseUrlName}}</a></span>
+              <span ng-repeat="item in foodEvent.foodProvided" class="badge"> {{item}} </span>
+            </div>
           </td>
 
-          <td class="third-column" ng-click="showRoute(foodEvent)">
-            <span class="info-text"> At {{ foodEvent.distance | number:1 }} mi. </span>
+          <td class="third-column clickable" ng-click="foodEvent.showDescription = !foodEvent.showDescription">
+            <span class="date-text"> At {{ foodEvent.distance | number:1 }} mi. </span>
           </td>
-          <td class="fourth-column">
-            <button type="button" class="btn btn-sm" ng-click="showRoute(foodEvent)"> 
-              <img class="tag route-btn" src="/assets/routeIcon.svg" style="height:20px" />
+          <td class="fourth-column clickable" ng-click="foodEvent.showDescription = !foodEvent.showDescription">
+            <button type="button" class="btn btn-sm" ng-click="showRoute(foodEvent); $event.stopPropagation();"> 
+              <img class="route-btn" src="/assets/routeIcon.svg" />
             </button>
           </td>
         </tr>

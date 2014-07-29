@@ -11,7 +11,7 @@ angular.module('app.home.managers')
   this.init           = function(){
     this.map          = new google.maps.Map(document.getElementById("map"), appConstants.mapOptions.default); //map defined globally
 
-    mapRouteManager.init(this.map);
+    mapRouteManager.init(this.map, this);
 
     $rootScope.$on('dragend:home', function(e){ 
       this.redrawRadiusCircle();

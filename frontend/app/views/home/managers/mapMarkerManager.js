@@ -37,11 +37,11 @@ angular.module('app.home.managers')
     if(description.length>143){
       foodEvent.description = foodEvent.description.slice(0,143)+'...';
     }
-    var html = '<b><a href="'+foodEvent.unique+'">'+foodEvent.name+'</a></b>'+
+    var html = '<b><a href="'+foodEvent.url+'">'+foodEvent.name+'</a></b>'+
                '<br>'+
-               '<a href="'+foodEvent.unique+'">'+foodEvent.description+'</a>'+
+               '<a href="'+foodEvent.url+'">'+foodEvent.description+'</a>'+
                '<b>@ '+foodEvent.venue.name+'</b>'+
-               '<a href="'+foodEvent.unique+'">'+venue.address1+'</a>'+' - ' + venue.city;
+               '<a href="'+foodEvent.url+'">'+venue.address1+'</a>'+' - ' + venue.city;
     marker.infoWindow = new google.maps.InfoWindow({ 
       'content': html, 
       'maxWidth':300,

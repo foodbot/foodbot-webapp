@@ -17,17 +17,23 @@ angular.module('app.home.managers')
   
   this.setDestination = function(position){ dest = position; }; 
 
-  this.init = function(map){
+  this.init = function(map, mapManager){
     this.directionsDisplay.setMap(map); 
+    this.mapManager = mapManager;
   };
 
   this.showRoute = function(orig, dest){
+    if(!this.mapManager){
+      console.log("mapRouteManager - mapManager not found");
+    }
+
     this.setDestination(dest);
     request = {
       'origin'      : orig,
       'destination' : this.getDestination(),
       'travelMode'  : google.maps.TravelMode.WALKING 
     };
+    this.mapManager.redrawCenter(); //re-centers map
     this.directionsService.route(request, function(response, status) {
       if (status == google.maps.DirectionsStatus.OK) {
         this.directionsDisplay.setDirections(response);

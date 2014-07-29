@@ -23,10 +23,16 @@ angular.module('app.home.searchBar', [
           sameDay : 'LT',
           nextDay : 'LT',
           lastWeek : '[last] dddd [at] LT',
-          nextWeek : 'ddd - LT',
+          nextWeek : 'ddd LT',
           sameElse : 'L'
         }
       });  
+      //cuts string to nearest word
+      var cutString = function(str, length){
+        var cut = str.indexOf(' ', length);
+        if(cut === -1) return str;
+        return str.substring(0, cut);
+      };
       var updateAddress = function(address){
         mapManager.setAddress(address);
         apiManager.getEvents(address)
@@ -37,9 +43,17 @@ angular.module('app.home.searchBar', [
             foodEvents[i].showTags        = false ;
             foodEvents[i].marker          = null ;
             foodEvents[i].timeFMT         = moment(new Date(foodEvents[i].time)).calendar() ;
-
+            
+            var re = new RegExp(String.fromCharCode(160)+'|\n|\r|"   "|"  "', "g");
+            foodEvents[i].description = foodEvents[i].description.trim();
+            foodEvents[i].description = foodEvents[i].description.replace(re, " ");
+            if(foodEvents[i].name.length > 40){
+              foodEvents[i].name = cutString(foodEvents[i].name, 40)+'..';
+            } else {
+              foodEvents[i].name = foodEvents[i].name;
+            }
             if(foodEvents[i].description.length > 283){
-              foodEvents[i].text = foodEvents[i].description.slice(0,283)+' ...';
+              foodEvents[i].text = cutString(foodEvents[i].description, 283)+'..';
             } else {
               foodEvents[i].text = foodEvents[i].description;
             }
