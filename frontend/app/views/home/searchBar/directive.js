@@ -12,9 +12,15 @@ angular.module('app.home.searchBar', [
       radius: "=",
       foodEvents: "="
     },
-    controller: function($scope, $timeout, $filter, countManager, apiManager, mapManager, timeManager, moment){
+    controller: function($scope, $rootScope, $timeout, $filter, countManager, apiManager, mapManager, timeManager, moment){
       var filterAddressTimeout;
       $scope.getCount = countManager.getCount;
+      $rootScope.$on('dragEnded:home', function(e, data){
+        $scope.address = data.position.lat()+", "+data.position.lng();
+        $scope.$apply();
+        $timeout.cancel(filterAddressTimeout);
+        updateAddress($scope.address, false);
+      });
 
       mapManager.init();
       moment.lang('en', {
@@ -33,8 +39,10 @@ angular.module('app.home.searchBar', [
         if(cut === -1) return str;
         return str.substring(0, cut);
       };
-      var updateAddress = function(address){
-        mapManager.setAddress(address);
+      var updateAddress = function(address, updateHomePin){
+        if(updateHomePin){
+          mapManager.setAddress(address);
+        }
         apiManager.getEvents(address)
         .then(function(res){ 
           var foodEvents = res.data.results; 
@@ -65,7 +73,7 @@ angular.module('app.home.searchBar', [
           filteredEvents = $filter('eventTime')(filteredEvents, $scope.timeframe);
 
           countManager.updateCount($scope.foodEvents);   
-          mapManager.updateMarkers(filteredEvents);
+          mapManager.updateMarkers(filteredEvents, $scope.address);
         });
       };
 
@@ -89,7 +97,7 @@ angular.module('app.home.searchBar', [
       $scope.$watch('address', function(val){
         if(filterAddressTimeout) $timeout.cancel(filterAddressTimeout);
         filterAddressTimeout = $timeout(function() {
-          updateAddress($scope.address);
+          updateAddress($scope.address, true);
         }, 800);
       });
     }

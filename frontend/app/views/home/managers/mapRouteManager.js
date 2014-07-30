@@ -5,8 +5,9 @@ angular.module('app.home.managers')
   var dest = null;
 
   this.rendererOptions   = { 
-    'draggable': true, 
-    'preserveViewport': true
+    draggable: true,
+    suppressMarkers: true,
+    preserveViewport: true
   };
 
   this.directionsDisplay = new google.maps.DirectionsRenderer(this.rendererOptions);
@@ -18,15 +19,17 @@ angular.module('app.home.managers')
   this.setDestination = function(position){ dest = position; }; 
 
   this.init = function(map, mapManager){
-    this.directionsDisplay.setMap(map); 
     this.mapManager = mapManager;
   };
 
+  this.flush = function(){
+    this.directionsDisplay.setMap(null);
+  };
   this.showRoute = function(orig, dest){
     if(!this.mapManager){
       console.log("mapRouteManager - mapManager not found");
     }
-
+    this.directionsDisplay.setMap(this.mapManager.getMap());
     this.setDestination(dest);
     request = {
       'origin'      : orig,
@@ -39,9 +42,9 @@ angular.module('app.home.managers')
         this.directionsDisplay.setDirections(response);
       }
     }.bind(this));
-    $rootScope.$on('dragend:home', function(e){ 
-        debugger;
-        this.directionsDisplay.setMap(null);
-    }.bind(this));
+    // $rootScope.$on('dragend:home', function(e){ 
+    //     debugger;
+    //     this.directionsDisplay.setMap(null);
+    // }.bind(this));
   };
 });

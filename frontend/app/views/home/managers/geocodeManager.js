@@ -6,8 +6,11 @@ angular.module('app.home.managers')
   //gets the latLng position for address: (returns a promise)
   this.getPosition  = function(addr){ 
     return $http.get(uri+'address='+ addr)
-    .then(function(item){
-      var loc = item.data.results[0].geometry.location;
+    .then(function(res){
+      if(res.status !== 200){
+        throw "Address not found"; 
+      }
+      var loc = res.data.results[0].geometry.location;
       var position = new google.maps.LatLng(loc.lat, loc.lng);
       return position;
     });

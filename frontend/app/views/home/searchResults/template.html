@@ -30,10 +30,10 @@
           </td>
 
           <td class="second-column clickable" ng-click="foodEvent.showDescription = !foodEvent.showDescription">
-            <a ng-href="{{foodEvent.url}}" ng-click="$event.stopPropagation();"><b class="title-text"> {{ foodEvent.name | capitalize }} </b></a>
+            <a target="_blank" ng-href="{{foodEvent.url}}"  ng-click="$event.stopPropagation();"><b class="title-text"> {{ foodEvent.name | capitalize }} </b></a>
             <p class="description-text text-justify" ng-show="foodEvent.showDescription"> {{foodEvent.text}} </p>
             <div class="bottom-row">
-              <span class="url-text"><a ng-href="{{foodEvent.url| baseUrl}}" ng-click="$event.stopPropagation();">{{foodEvent.url | baseUrlName}}</a></span>
+              <span class="url-text"><a target="_blank" ng-href="{{foodEvent.url| baseUrl}}" ng-click="$event.stopPropagation();">{{foodEvent.url | baseUrlName}}</a></span>
               <span ng-repeat="item in foodEvent.foodProvided" class="badge"> {{item}} </span>
             </div>
           </td>

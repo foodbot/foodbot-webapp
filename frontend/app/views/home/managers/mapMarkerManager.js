@@ -26,7 +26,7 @@ angular.module('app.home.managers')
     this.lastInfo.open(marker.getMap(), marker);
   };
   
-  this.addEventPin = function(foodEvent, map){ 
+  this.addEventPin = function(foodEvent, startAddress, map, mapManager){ 
     var venue       = foodEvent.venue.address;
     var position    = new google.maps.LatLng(venue.latitude, venue.longitude);
     var marker      = new google.maps.Marker({ 
@@ -40,15 +40,15 @@ angular.module('app.home.managers')
     setTimeout(function(){
       marker.setIcon(appConstants.normalMarkerUri);
     }, 100);
+
     var description = foodEvent.description;
     if(description.length>143){
       foodEvent.description = foodEvent.description.slice(0,143)+'...';
     }
-    var html = '<b><a href="'+foodEvent.url+'">'+foodEvent.name+'</a></b>'+
+    var html = '<div><b><a target="_blank" href="'+foodEvent.url+'">'+foodEvent.name+'</a></b></div'+
                '<br>'+
-               '<a href="'+foodEvent.url+'">'+foodEvent.description+'</a>'+
-               '<b>@ '+foodEvent.venue.name+'</b>'+
-               '<a href="'+foodEvent.url+'">'+venue.address1+'</a>'+' - ' + venue.city;
+               '<div><a target="_blank" href="https://maps.google.com?saddr='+startAddress+'&daddr='+venue.address1+'"><b>'+foodEvent.venue.name+'</b> <br/>'+venue.address1+'</a></div>';
+    
     marker.infoWindow = new google.maps.InfoWindow({ 
       'content': html, 
       'maxWidth':300,
@@ -56,12 +56,13 @@ angular.module('app.home.managers')
     });
     storage.push(marker);
     foodEvent.marker = marker;
+    
     // http://stackoverflow.com/questions/7044587/adding-multiple-markers-with-infowindows-google-maps-api
     google.maps.event.addListener(marker, 'click', function() {
         this.closeWindow();
         this.onClick(foodEvent.marker);
-        mapRouteManager.get(mapManager.getHomePosition(), foodEvent.marker.getPosition());
-        // mapCenterManager.setCenterPosition(foodEvent.marker.getPosition());
+        mapRouteManager.showRoute(mapManager.getHomePosition(), foodEvent.marker.getPosition());
+        mapCenterManager.setCenterPosition(foodEvent.marker.getPosition());
     }.bind(this));
     var pinHighlightImage = new google.maps.MarkerImage(
       appConstants.highlightMarkerUri,

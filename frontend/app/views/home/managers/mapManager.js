@@ -13,10 +13,6 @@ angular.module('app.home.managers')
 
     mapRouteManager.init(this.map, this);
 
-    $rootScope.$on('dragend:home', function(e){ 
-      this.redrawRadiusCircle();
-    }.bind(this));
-
     google.maps.event.addDomListener(window, 'resize', function(e) {
       this.redrawCenter(); 
     }.bind(this));
@@ -27,13 +23,13 @@ angular.module('app.home.managers')
     }.bind(this));
 
     var position = appConstants.initialPosition; //Default location == sf
-    this.setHomePosition(position);
+    this.setHomePosition(position, false);
   };
 
-  this.updateMarkers     = function(foodEvents){
+  this.updateMarkers     = function(foodEvents, startAddress){
     mapMarkerManager.flush();
     for (var i = 0; i < foodEvents.length ; i++) {
-      mapMarkerManager.addEventPin(foodEvents[i], this.getMap());
+      mapMarkerManager.addEventPin(foodEvents[i], startAddress, this.getMap(), this);
     }
   };
   this.getMap           = function(){ return this.map; };
@@ -42,15 +38,21 @@ angular.module('app.home.managers')
     console.log("Address:", address);
     return geocodeManager.getPosition(address)
     .then(function(position){
-      this.setHomePosition(position, true);
-      this.redrawRadiusCircle();
+      this.setHomePosition(position);
+      this.redrawRadius();
     }.bind(this));
   };
 
   this.getHomePosition   = function(){ return home.getPosition(); };
 
   //sets the home pin/position
-  this.setHomePosition   = function(position, replacePin){
+  this.setHomePosition   = function(position, isVisible, isAnimated){
+    if(isVisible === undefined){
+      isVisible = true;
+    }
+    if(isAnimated === undefined){
+      isAnimated = true;
+    }
     console.log(position);
     if(home){ 
       home.setMap(null); 
@@ -58,28 +60,31 @@ angular.module('app.home.managers')
     var marker = home = new google.maps.Marker({ 
       title: 'My position', 
       map: this.getMap(),
-      draggable:true, 
+      draggable: true, 
       position: position, 
       icon: appConstants.blankMarkerUri,
-      animation: google.maps.Animation.DROP,
-
     });
+    if(isAnimated){
+      marker.setAnimation(google.maps.Animation.DROP);
+    }
     //this fixes flicker bug on chrome
-    if(replacePin){
+    if(isVisible){
       setTimeout(function(){
         marker.setIcon(appConstants.homeMarkerUri);
       }, 200);
     }
     if(!home.getPosition) debugger;
     this.setCenterPosition(home.getPosition());
+    mapRouteManager.flush();
 
-    // google.maps.event.addListener(home, "dragend", function(e) { 
-    //   var position = new google.maps.LatLng(e.latLng.lat(), e.latLng.lng());
-    //   this.scope.address = position.lat()+','+position.lng();
-    //   this.set(position);
-    //   // this.scope.update();
-    //   $rootScope.$emit('dragend:home');
-    // }.bind(this));
+
+    google.maps.event.addListener(home, "dragend", function(e) { 
+      var position = new google.maps.LatLng(e.latLng.lat(), e.latLng.lng());
+      this.redrawCenter();
+      this.redrawRadius();
+      mapRouteManager.flush();
+      $rootScope.$emit('dragEnded:home', {position:position});
+    }.bind(this));
   };
 
   this.setCenterPosition = function(position){
@@ -94,11 +99,11 @@ angular.module('app.home.managers')
     var delta         = Math.abs(ne.lng()-sw.lng());
     var lat           = 0.5 * (centerPosition.lat()+this.getHomePosition().lat());
     var lng           = 0.5 * (centerPosition.lng()+this.getHomePosition().lng());
-    var offset = new google.maps.LatLng(lat, lng + delta*0.25*(-1));
+    var offset = new google.maps.LatLng(lat, lng + delta*0.3*(-1));
     this.map.setCenter(offset); 
   };
 
-  this.redrawRadiusCircle = function(){
+  this.redrawRadius = function(){
     if(radiusCircle) { 
       radiusCircle.setMap(null);
     }
@@ -118,7 +123,7 @@ angular.module('app.home.managers')
 
   this.setRadius         = function(value){
     radius = value;
-    this.redrawRadiusCircle();
+    this.redrawRadius();
   };
 
   
