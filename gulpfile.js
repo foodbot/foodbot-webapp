@@ -1,8 +1,11 @@
 var gulp = require('gulp');
+var gulpif = require('gulp-if');
 var clean = require('gulp-rimraf');
 var concat = require('gulp-concat');
-var rename = require('gulp-rename');
+var uglify = require('gulp-uglify');
 var stylus = require('gulp-stylus');
+var cssMin = require('gulp-minify-css');
+var ngMin = require('gulp-ng-annotate');
 var nib = require('nib');
 var es = require('event-stream');
 var merge = require('event-stream').concat;
@@ -10,40 +13,48 @@ var merge = require('event-stream').concat;
 var publicDir = './public';
 var publicAssetsDir = './public/assets';
 
-var concatLibJS = function() {
+var concatLibJS = function(minifyMe) {
   return gulp.src([
-      './frontend/lib/jquery/dist/jquery.js',
-      './frontend/lib/bootstrap/dist/js/bootstrap.js',
-      './frontend/lib/bootstrap/js/button.js',
-      './frontend/lib/moment/moment.js',
-      './frontend/lib/underscore/underscore.js',
-      './frontend/lib/angular/angular.js',
-      './frontend/lib/angular-route/angular-route.js',
-    ])
-    .pipe(concat('lib.js'))
-    .pipe(gulp.dest(publicAssetsDir));
+    './frontend/lib/jquery/dist/jquery.js',
+    './frontend/lib/bootstrap/dist/js/bootstrap.js',
+    './frontend/lib/bootstrap/js/button.js',
+    './frontend/lib/moment/moment.js',
+    './frontend/lib/underscore/underscore.js',
+    './frontend/lib/angular/angular.js',
+    './frontend/lib/angular-route/angular-route.js',
+  ])
+  .pipe(concat('lib.js'))
+  .pipe(gulpif(minifyMe, uglify()))
+  .pipe(gulp.dest(publicAssetsDir));
+
 };
-var concatAppJS = function() {
-  return gulp.src('./frontend/app/**/*.js')
-    .pipe(concat('app.js'))
-    .pipe(gulp.dest(publicAssetsDir));
+var concatAppJS = function(minifyMe) {
+  return gulp.src([
+    './frontend/app/**/*.js'
+  ])
+  .pipe(concat('app.js'))
+  .pipe(gulpif(minifyMe, ngMin()))
+  .pipe(gulpif(minifyMe, uglify()))
+  .pipe(gulp.dest(publicAssetsDir));
 };
-var concatCSS = function(){
+var concatCSS = function(minifyMe){
   return gulp.src([
     './frontend/app/**/*.styl',
-    ])
-    .pipe(stylus({use: [nib()]}))
-    .pipe(concat('app.css'))
-    .pipe(gulp.dest(publicAssetsDir));
+  ])
+  .pipe(stylus({use: [nib()]}))
+  .pipe(concat('app.css'))
+  .pipe(gulpif(minifyMe, cssMin()))
+  .pipe(gulp.dest(publicAssetsDir));
 };
 var copyStuff = function() {
   return gulp.src([
-    './frontend/**/*', 
-    '!./frontend/**/*.js', 
-    '!./frontend/**/*.styl', 
-    '!./frontend/lib/**/*'])
-    .pipe(filterEmptyDirs())
-    .pipe(gulp.dest(publicDir));
+  './frontend/**/*', 
+  '!./frontend/**/*.js', 
+  '!./frontend/**/*.styl', 
+  '!./frontend/lib/**/*'
+  ])
+  .pipe(filterEmptyDirs())
+  .pipe(gulp.dest(publicDir));
 };
 //removes empty dirs from stream
 var filterEmptyDirs = function() {
@@ -84,5 +95,5 @@ gulp.task('default', ['clean'], function(){
 });
 
 gulp.task('build', ['clean'], function(){
-  return merge(copyStuff(), concatLibJS(), concatAppJS(), concatCSS());
+  return merge(copyStuff(), concatLibJS(true), concatAppJS(true), concatCSS(true));
 });
