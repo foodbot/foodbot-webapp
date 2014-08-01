@@ -13,6 +13,7 @@ var app = module.exports = express();
  */
 
 app.set('port', process.env.PORT || 8000);
+app.use(express.compress());
 app.use(express.static(path.join(__dirname, 'public')));
 /**
  * Routes
