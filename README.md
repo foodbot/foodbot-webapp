@@ -6,13 +6,11 @@ Rest API + client-side app server.
 Dependencies: node, bower, npm, gulp, nodemon  
 (Also needs foodbot-scraper to populate the database)
 
-To run: Fill out run.sh with your API keys, and type '. run.sh'
+To run: fill out run.sh with your API keys, and type '. run.sh'
 
 run.sh:
 ```
 #!/bin/bash
-npm install
-bower install
 gulp build
 
 export GOOGLEAPIKEY='@@@@@@'
