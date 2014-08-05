@@ -8,18 +8,17 @@ var test = require('./routes/test');
 var path = require('path');
 var app = module.exports = express();
 
+var wwwRedirect = function (req, res, next) {
+  if (req.headers.host.slice(0, 4) !== 'www.' && !req.headers.host.match(/^(localhost|127.0.0.1)/)) {
+    return res.redirect(req.protocol + '://www.' + req.headers.host + req.originalUrl);
+  }
+  next();
+};
 /**
  * Configuration
  */
-
 app.set('port', process.env.PORT || 8000);
-app.get('/*', function(req, res, next) {
-    if (req.headers.host.match(/^(www|localhost|127.0.0.1)/) === null) {
-      res.redirect('http://www.' + req.headers.host + req.url, 301);
-    } else {
-      next();
-    }
-});
+app.use(wwwRedirect);
 app.use(express.compress());
 app.use(express.static(path.join(__dirname, 'public')));
 /**
