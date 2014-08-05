@@ -9,10 +9,11 @@ var path = require('path');
 var app = module.exports = express();
 
 var wwwRedirect = function (req, res, next) {
-  if (req.headers.host.slice(0, 4) !== 'www.' && !req.headers.host.match(/^(localhost|127.0.0.1)/)) {
-    return res.redirect(req.protocol + '://www.' + req.headers.host + req.originalUrl);
+  if (req.headers.host.slice(0, 3) !== 'www' && !req.headers.host.match(/^(localhost|127.0.0.1)/)) {
+    res.redirect(req.protocol + '://www.' + req.headers.host + req.url);
+  }else{
+    next();
   }
-  next();
 };
 /**
  * Configuration
