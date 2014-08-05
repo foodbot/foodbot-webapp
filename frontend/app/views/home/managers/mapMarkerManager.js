@@ -39,7 +39,7 @@ angular.module('app.home.managers')
     //this fixes flicker bug on chrome
     setTimeout(function(){
       marker.setIcon(appConstants.normalMarkerUri);
-    }, 100);
+    }, 150);
 
     var description = foodEvent.description;
     if(description.length>143){

@@ -1,17 +1,19 @@
-var gulp = require('gulp');
-var gulpif = require('gulp-if');
-var clean = require('gulp-rimraf');
-var concat = require('gulp-concat');
-var uglify = require('gulp-uglify');
-var stylus = require('gulp-stylus');
-var cssMin = require('gulp-minify-css');
-var ngMin = require('gulp-ng-annotate');
-var nib = require('nib');
-var es = require('event-stream');
-var merge = require('event-stream').concat;
+var gulp    = require('gulp');
+var gulpif  = require('gulp-if');
+var clean   = require('gulp-rimraf');
+var concat  = require('gulp-concat');
+var uglify  = require('gulp-uglify');
+var stylus  = require('gulp-stylus');
+var replace = require("gulp-replace");
+var cssMin  = require('gulp-minify-css');
+var ngMin   = require('gulp-ng-annotate');
+var nib     = require('nib');
+var es      = require('event-stream');
+var merge   = require('event-stream').concat;
 
-var publicDir = './public';
+var publicDir       = './public';
 var publicAssetsDir = './public/assets';
+var defaultCDNBase  = '//cdn.foodbot.io';
 
 var concatLibJS = function(minifyMe) {
   return gulp.src([
@@ -46,12 +48,12 @@ var concatCSS = function(minifyMe){
   .pipe(gulpif(minifyMe, cssMin()))
   .pipe(gulp.dest(publicAssetsDir));
 };
-var copyStuff = function() {
+var copyStuff = function(minifyMe) {
   return gulp.src([
-  './frontend/**/*', 
-  '!./frontend/**/*.js', 
-  '!./frontend/**/*.styl', 
-  '!./frontend/lib/**/*'
+    './frontend/**/*', 
+    '!./frontend/**/*.js', 
+    '!./frontend/**/*.styl', 
+    '!./frontend/lib/**/*'
   ])
   .pipe(filterEmptyDirs())
   .pipe(gulp.dest(publicDir));
@@ -67,9 +69,19 @@ var filterEmptyDirs = function() {
   });
 };
 
+// converts '/assets/app.js' into '//cdn.foodbot.io/assets/app.js'
+var cdnizeStuff = function(){
+  return gulp.src([
+    publicDir+"/**/*.html",
+    publicDir+"/**/app.js",
+  ])
+  .pipe(replace(/\/?(assets\/.*\..*?)/gi, defaultCDNBase+'/$1'))
+  .pipe(gulp.dest(publicDir));
+};
+
 gulp.task('clean', function(){
-   return gulp.src(publicDir,{read: false})
-    .pipe(clean());
+  return gulp.src(publicDir,{read: false})
+  .pipe(clean());
 });
 
 gulp.task('default', ['clean'], function(){
@@ -93,7 +105,14 @@ gulp.task('default', ['clean'], function(){
 
   return merge(copyStuff(), concatLibJS(), concatAppJS(), concatCSS());
 });
-
 gulp.task('build', ['clean'], function(){
   return merge(copyStuff(), concatLibJS(true), concatAppJS(true), concatCSS(true));
+});
+
+//production build + cdn support
+gulp.task('build-cdn', ['clean'], function(){
+  return merge(copyStuff(), concatLibJS(true), concatAppJS(true), concatCSS(true))
+  .on("end", function(){
+    return cdnizeStuff();
+  });
 });

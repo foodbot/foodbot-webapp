@@ -2,7 +2,6 @@ angular.module('shared.appConstants', [
   'shim.google',
 ])
 
-// http://snazzymaps.com/style/1/pale-dawn
 .service('appConstants', function(google){
   this.initialPosition = new google.maps.LatLng(37.7833,-122.3167); //SF
   this.highlightMarkerUri = '/assets/foodPinHighlighted.png';
