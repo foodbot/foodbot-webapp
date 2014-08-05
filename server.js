@@ -13,20 +13,19 @@ var app = module.exports = express();
  */
 
 app.set('port', process.env.PORT || 8000);
-app.use(express.compress());
-app.use(express.static(path.join(__dirname, 'public')));
-/**
- * Routes
- */
- //redirects to www domain
 app.get('/*', function(req, res, next) {
-    console.log("host:",req.headers.host);
     if (req.headers.host.match(/^(www|localhost|127.0.0.1)/) === null) {
       res.redirect('http://www.' + req.headers.host + req.url, 301);
     } else {
       next();
     }
 });
+app.use(express.compress());
+app.use(express.static(path.join(__dirname, 'public')));
+/**
+ * Routes
+ */
+ //redirects to www domain
 app.get('/api', api);
 app.get('/test', test);
 
