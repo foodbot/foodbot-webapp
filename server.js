@@ -8,8 +8,9 @@ var test = require('./routes/test');
 var path = require('path');
 var app = module.exports = express();
 
+ //redirects to www domain except for subdomains
 var wwwRedirect = function (req, res, next) {
-  if (req.headers.host.slice(0, 3) !== 'www' && !req.headers.host.match(/^(localhost|127.0.0.1)/)) {
+  if (req.headers.host.slice(0, 3) !== 'www' && !req.headers.host.match(/^(localhost|.*?\..*?\.)/)) {
     res.redirect(req.protocol + '://www.' + req.headers.host + req.url);
   }else{
     next();
@@ -25,7 +26,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 /**
  * Routes
  */
- //redirects to www domain
 app.get('/api', api);
 app.get('/test', test);
 
