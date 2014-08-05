@@ -53,7 +53,6 @@ angular.module('app.home.managers')
     if(isAnimated === undefined){
       isAnimated = true;
     }
-    console.log(position);
     if(home){ 
       home.setMap(null); 
     }

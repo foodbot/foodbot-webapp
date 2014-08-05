@@ -1,15 +1,16 @@
-var gulp    = require('gulp');
-var gulpif  = require('gulp-if');
-var clean   = require('gulp-rimraf');
-var concat  = require('gulp-concat');
-var uglify  = require('gulp-uglify');
-var stylus  = require('gulp-stylus');
-var replace = require("gulp-replace");
-var cssMin  = require('gulp-minify-css');
-var ngMin   = require('gulp-ng-annotate');
-var nib     = require('nib');
-var es      = require('event-stream');
-var merge   = require('event-stream').concat;
+var gulp     = require('gulp');
+var gulpif   = require('gulp-if');
+var clean    = require('gulp-rimraf');
+var concat   = require('gulp-concat');
+var uglify   = require('gulp-uglify');
+var stylus   = require('gulp-stylus');
+var replace  = require("gulp-replace");
+var imageMin = require('gulp-imageMin');
+var cssMin   = require('gulp-minify-css');
+var ngMin    = require('gulp-ng-annotate');
+var nib      = require('nib');
+var es       = require('event-stream');
+var merge    = require('event-stream').concat;
 
 var publicDir       = './public';
 var publicAssetsDir = './public/assets';
@@ -78,6 +79,13 @@ var cdnizeStuff = function(){
   .pipe(replace(/\/?(assets\/.*\..*?)/gi, defaultCDNBase+'/$1'))
   .pipe(gulp.dest(publicDir));
 };
+var minifyImages = function(){
+  return gulp.src([
+    publicAssetsDir+"/**/*",
+  ])
+  .pipe(imageMin())
+  .pipe(gulp.dest(publicAssetsDir));
+};
 
 gulp.task('clean', function(){
   return gulp.src(publicDir,{read: false})
@@ -106,13 +114,17 @@ gulp.task('default', ['clean'], function(){
   return merge(copyStuff(), concatLibJS(), concatAppJS(), concatCSS());
 });
 gulp.task('build', ['clean'], function(){
-  return merge(copyStuff(), concatLibJS(true), concatAppJS(true), concatCSS(true));
+  return merge(copyStuff(), concatLibJS(true), concatAppJS(true), concatCSS(true))
+  .on("end", function(){
+    minifyImages();
+  });
 });
 
 //production build + cdn support
 gulp.task('build-cdn', ['clean'], function(){
   return merge(copyStuff(), concatLibJS(true), concatAppJS(true), concatCSS(true))
   .on("end", function(){
-    return cdnizeStuff();
+    cdnizeStuff();
+    minifyImages();
   });
 });
