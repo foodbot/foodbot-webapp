@@ -9,3 +9,5 @@ Food.sublime-project
 Food.sublime-workspace
 
 /public
+/node_modules
+/frontend/lib
