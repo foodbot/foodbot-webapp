@@ -11,3 +11,4 @@ Food.sublime-workspace
 /public
 /node_modules
 /frontend/lib
+.elasticbeanstalk/

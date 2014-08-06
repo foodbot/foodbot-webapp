@@ -2,10 +2,6 @@
   "name": "foodbot-webapp",
   "version": "0.0.1",
   "private": true,
-  "scripts": {
-    "start": "node server.js",
-    "postinstall": "gulp build"
-  },
   "dependencies": {
     "bluebird": "~1.2.1",
     "ejs": "~1.0.0",
