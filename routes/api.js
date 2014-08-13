@@ -242,7 +242,7 @@ setInterval(function(){
   db.runCommand({ping:1})
   .then(function(res) {
     if(res.ok){ 
-      console.log("We're still up!");
+      // console.log("We're still up!");
     }
   });
 }, 3000);
