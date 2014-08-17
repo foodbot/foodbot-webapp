@@ -81,22 +81,22 @@ module.exports = function(req, res){
     db.meetup.ensureIndex({location:"2d"});
     db.funcheap.ensureIndex({location:"2d"});
     db.eventbrite.ensureIndex({location:"2d"});
-    db.facebook.ensureIndex({location:"2d"});
+    // db.facebook.ensureIndex({location:"2d"});
 
     console.log(data.lng, data.lat);
     lat = data.lat;
     lng = data.lng;
     return Promise.all([
-      db.facebook.find(
-          { $and: [
-            { "venue.address.city": "San Francisco" },
-            { ticketUrl: null },
-            { location : { $geoWithin : { $centerSphere : [ [ data.lng, data.lat ], radius / 3959 ] } } },
-            { time: { $gt: time-5*60*60*1000 } }
-            ]
-          })
-          .limit(1000)
-          .toArray(),
+      // db.facebook.find(
+      //     { $and: [
+      //       { "venue.address.city": "San Francisco" },
+      //       { ticketUrl: null },
+      //       { location : { $geoWithin : { $centerSphere : [ [ data.lng, data.lat ], radius / 3959 ] } } },
+      //       { time: { $gt: time-5*60*60*1000 } }
+      //       ]
+      //     })
+      //     .limit(1000)
+      //     .toArray(),
 
       db.meetup.find({
         // { time: { $gt: time-5*60*60*1000 } },
@@ -133,9 +133,9 @@ module.exports = function(req, res){
   /**********************************************************************
    * Getting the next events from the different collections
    **********************************************************************/
-  .spread(function(meetup, eventbrite, funcheap, facebook, data) {
+  .spread(function(meetup, eventbrite, funcheap/*, facebook*/, data) {
     // concat the meetup, eventbrite and funcheap results
-    var allEvents = _.union(meetup, eventbrite, funcheap, facebook);
+    var allEvents = _.union(meetup, eventbrite, funcheap/*, facebook*/);
     return allEvents;
   })
 
