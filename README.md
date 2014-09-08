@@ -1,5 +1,6 @@
 foodbot-webapp
 ===========
+(Deprecated, see: https://github.com/robgraeber/foodbot-webapp/)
 
 Rest API + client-side app server.
 
